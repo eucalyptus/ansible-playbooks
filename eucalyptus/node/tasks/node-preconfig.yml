@@ -1,0 +1,32 @@
+  - name: checking existing networking configuration
+    action: shell /sbin/ifconfig $bridge
+    register: bridge_exists
+    ignore_errors: true
+    tags: template
+    
+  - name: template the interface file
+    action: template src=node/templates/ifconfig_bridge_interface_${bridge_type}.j2 dest=/etc/sysconfig/network-scripts/ifcfg-${bridge_iface}
+    only_if: "'${bridge_exists.rc}' == '1'"
+    tags: template
+    notify: restart networking services
+    
+  - name: template the bridge interface file
+    action: template src=node/templates/ifconfig_bridge_${bridge_type}.j2 dest=/etc/sysconfig/network-scripts/ifcfg-${bridge}
+    only_if: "'${bridge_exists.rc}' == '1'"
+    tags: template
+    notify: restart networking services
+  
+  - name: modprobe kvm modules
+    action: shell /sbin/modprobe kvm_intel
+    only_if: "'$hypervisor' == 'kvm'"
+    register: kvm_loaded
+    tags: tune
+    
+  - name: Fail on lack of VT
+    action: fail msg="VT is not enabled on this system, please enable it in the system BIOS before proceeding."
+    only_if: "'${kvm_loaded.rc}' == '1'"
+    tags: tune
+
+  - name: Set tuned profile
+    action: command tuned-adm profile ${tuned_profile}
+    tags: tune  

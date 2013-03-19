@@ -1,0 +1,48 @@
+---
+This is the readme file for the Eucalyptus cloud deployment playbook(s).
+The directory structure is explained here.
+
+hosts                   # inventory file for all hosts.  Place hosts into the desired groups.
+
+group_vars/             
+    all                 # variables for all host groups
+    nodecontroller      # variables specific to the nodecontroller host group
+    clustercontroller   # variables specific to the clustercontroller host group
+    storagecontroller   # variables specific to the storagecontroller host group
+host_vars/
+                        # host specific variables when/if required
+vars/
+                        # variable files. Useful for if a host exists in more than one group
+
+cloud                   # cloud level (top tier) components in here
+
+cluster                 # cluster level (middle tier) components in here
+    tasks/              # tasks specific to the cluster tier hosts
+        node-key-fetch  # task file for fetching the keys for the node controllers
+        node-registration   # task file for registering nodes with the cluster controller
+
+node                    # node level (bottom tier) components in here
+    tasks/              # tasks specific to the node tier hosts
+        node-key-copy   # task file for copying keys to the node controllers
+        node-preconfig  # task file for pre-registration configuration of node controllers
+    templates/          # templates specific to the node tier hosts
+        ifconfig_bridge_interface.j2    # ifcfg-iface* file for templating in node-preconfig
+        ifconfig_bridge.j2      # ifcfg-brX file for templating in node-preconfig
+
+common/                 # here we have common resources for all hosts, enhancing re-use
+    tasks/              #
+        registration    # task file for registration "role"
+        init            # task file for initialization of the DB / CLC
+        packages        # task file for package installs
+        preconfig       # task file for preconfiguration tasks
+        refresh-facts   # task file for refreshing system facts
+        configuration       # task file for templating common configuration across all hosts
+    handlers/
+        handlers.yml        # common handler file
+    templates/
+        eucalyptus.conf.j2  # template for eucalyptus.conf
+    files/
+                            # any files can go in here
+
+cloud-deploy-sfe.yml     # primary playbook for topology (sfe = single front end)
+cloud-deploy-*           # future topologies will be abstracted in new plays 

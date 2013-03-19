@@ -1,0 +1,23 @@
+    - name: Explictly stop the eucalyptus-cloud service
+      action: service name=eucalyptus-cloud state=stopped
+      tags:
+      - init
+
+    - name: Initializing DB
+      action: command /usr/sbin/euca_conf --initialize creates=/var/lib/eucalyptus/db
+      tags:
+      - init
+
+    - name: Explicit service start
+      action: service name=eucalyptus-cloud state=started
+      tags:
+      - init
+
+    - name: Wait for services to come up
+      action: wait_for port=$item delay=20
+      with_items: 
+      - 8773
+      - 8777
+      - 8443
+      tags:
+      - init

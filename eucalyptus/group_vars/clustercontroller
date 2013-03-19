@@ -1,0 +1,8 @@
+---
+# Variables common to CCs
+loglevel: INFO
+nc_port: 8775
+cc_port: 8774
+schedpolicy: ROUNDROBIN
+disable_tunneling: Y
+node_ip: ${hostvars.{groups.nodecontroller}.ansible_$bridge_iface.ipv4.address}

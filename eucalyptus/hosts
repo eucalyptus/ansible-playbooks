@@ -1,0 +1,14 @@
+[cloudcontroller]
+g-08-10.prc.eucalyptus-systems.com
+
+[walrus]
+g-08-10.prc.eucalyptus-systems.com
+
+[clustercontroller]
+g-08-10.prc.eucalyptus-systems.com
+
+[storagecontroller]
+g-08-10.prc.eucalyptus-systems.com
+
+[nodecontroller]
+g-08-12.prc.eucalyptus-systems.com

@@ -1,0 +1,3 @@
+service: eucalyptus-cloud
+tuned_profile: latency-performance
+package: @cloud-controller

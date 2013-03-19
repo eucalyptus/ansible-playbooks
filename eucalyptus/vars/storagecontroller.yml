@@ -1,0 +1,3 @@
+service: eucalyptus-cloud
+package: sc
+tuned_profile: enterprise-storage

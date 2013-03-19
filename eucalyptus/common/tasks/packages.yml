@@ -1,0 +1,53 @@
+  - name: Create a temporary directory
+    action: command mktemp -d 
+    register: temp
+
+  - name: Download the repo RPMs
+    action: get_url url=$item dest=${temp.stdout} thirsty=yes
+    with_items:
+    - http://downloads.eucalyptus.com/software/eucalyptus/${euca_version}/rhel/6/x86_64/eucalyptus-release-${euca_version}.noarch.rpm
+    - http://downloads.eucalyptus.com/software/euca2ools/${eucatools_version}/rhel/6/x86_64/euca2ools-release-${eucatools_version}.noarch.rpm
+    - http://downloads.eucalyptus.com/software/eucalyptus/${euca_version}/rhel/6/x86_64/epel-release-6.noarch.rpm
+    - http://downloads.eucalyptus.com/software/eucalyptus/${euca_version}/rhel/6/x86_64/elrepo-release-6.noarch.rpm
+    tags:
+    - geturl,packages
+
+  - name: Install the repo RPMs
+    action: command yum -y localinstall ${temp.stdout}/$item
+    with_items:
+    - eucalyptus-release-${euca_version}.noarch.rpm
+    - euca2ools-release-${eucatools_version}.noarch.rpm
+    - epel-release-6.noarch.rpm
+    - elrepo-release-6.noarch.rpm
+    tags:
+    - packages
+
+  - name: Remove temporary directory
+    action: file path=${temp.stdout} state=absent 
+    tags:
+    - packages
+
+  - name: Register with RHN for dependencies
+    action: command rhnreg_ks --username $rhn_username --password $rhn_password
+    only_if: '$do_rhn_reg'
+    ignore_errors: yes
+    tags:
+    - packages
+
+  - name: Add optional channel for dependencies
+    action: command rhn-channel -c rhel-x86_64-server-optional-6 -a -u $rhn_username -p $rhn_password
+    only_if: '$do_rhn_reg'
+    ignore_errors: yes
+    tags:
+    - packages
+
+  - name: Install packages
+    action: yum pkg=$item state=installed
+    with_items:
+    - libselinux-python
+    - tuned
+    - eucalyptus-${package}
+    - unzip
+    - ntp
+    tags:
+    - packages
