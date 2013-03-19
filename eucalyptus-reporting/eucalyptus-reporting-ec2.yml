@@ -1,0 +1,94 @@
+# ----------------------------------------------------- 
+# This playbook is an example for deploying a workload (eucalyptus reporting) into EC2/Euca 
+# -----------------------------------------------------
+
+- name: Stage instance
+  hosts: local
+  connection: local
+  user: root
+  gather_facts: false
+
+  vars:
+      keypair: admin
+      instance_type: m1.small
+      security_group: default
+      image: emi-77573E12
+
+  tasks:
+    - name: Launch instance 
+      local_action: ec2 ec2_access_key=$access_key ec2_secret_key=$secret_key ec2_url=$ec2_url keypair=$keypair group=$security_group instance_type=$instance_type image=$image wait=true
+      register: ec2
+      
+    - name: Add new instance to host group
+      local_action: add_host hostname=${item.public_ip} groupname=reporting
+      with_items: ${ec2.instances}
+
+# You could also refer to the host from the dict output from the module:
+#    - name: Add new instance to host group
+#      local_action: add_host hostname=${ec2.instances[0].public_ip} groupname=launched 
+
+    - name: Pausing
+      action: pause seconds=15
+      # Pause to allow the instance to finish boot
+      
+- name: Configure instance
+  hosts: reporting
+  user: root
+  gather_facts: True
+
+  vars_files:
+      - vars/euca-dw.yml
+      
+  tasks:
+    - name: Ensure NTP is up and running
+      action: service name=ntpd state=started
+    
+    - name: Download release RPM
+      action: get_url url=http://downloads.eucalyptus.com/software/eucalyptus/3.2/rhel/6/x86_64/eucalyptus-release-3.2.noarch.rpm dest=/tmp/ thirsty=yes
+    
+    - name: Configure Eucalyptus repo
+      action: command rpm -Uvh --force /tmp/eucalyptus-release-3.2.noarch.rpm 
+
+    - name: Install Eucalyptus Reporting Archive (Data Warehouse)
+      action: yum pkg=eucadw state=latest
+
+    - name: Install Ansible module dependencies
+      action: yum pkg=python-psycopg2 state=latest
+
+    - name: Install PostgreSQL 9.1
+      action: yum pkg=postgresql91-server state=latest
+
+    - name: Initialize the PostgreSQL database
+      action: command service postgresql-9.1 initdb
+
+    - name: Template pg_hba.conf
+      action: template src=templates/pg_hba.conf.j2 dest=/var/lib/pgsql/9.1/data/pg_hba.conf owner=postgres mode=0600
+
+    - name: Pausing
+      action: pause seconds=15
+
+    - name: Start PostgreSQL 9.1
+      action: service name=postgresql-9.1 state=started
+
+    - name: Pausing
+      action: pause seconds=10
+
+    - name: Create the PostgreSQL database
+      action: postgresql_db db=eucalyptus_reporting 
+
+    - name: Configure the PostgreSQL user
+      action: postgresql_user db=eucalyptus_reporting user=eucalyptus password=$pg_password priv=ALL
+
+    - name: Restart PostgreSQL 9.1
+      action: service name=postgresql-9.1 state=started
+
+# Use this section for a mail notification when instance configuration is complete. 
+# You need to set the mail_from and mail_to vars.
+#  - name: Send e-mail to admins
+#    local_action: mail
+#        from=${mail_from}
+#       to=${mail_to}
+#      subject="EC2 instance (${shortname}) ${ec2.instances[0].id}"
+#        body="EC2 instance ${ec2.instances[0].id} created on ${ec2.instances[0].public_ip}"
+
+

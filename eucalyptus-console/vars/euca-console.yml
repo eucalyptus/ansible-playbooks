@@ -1,0 +1,4 @@
+clchost: 10.104.1.130
+port: 8888
+lang: en_US
+euca_version: 3.2
