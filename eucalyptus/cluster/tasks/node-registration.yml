@@ -1,0 +1,14 @@
+- name: Check Registration of nodes
+  action: shell /usr/sbin/euca_conf --list-nodes | grep -q ${hostvars.{$item}.ansible_br0.ipv4.address}
+  with_items: ${groups.nodecontroller}
+  ignore_errors: yes
+  register: check_nodes
+  tags:
+  - nodereg
+
+- name: Registering nodes
+  action: command /usr/sbin/euca_conf --no-scp --no-rsync --no-sync --register-nodes ${hostvars.{$item}.ansible_br0.ipv4.address}
+  with_items: ${groups.nodecontroller}
+  only_if: "'${check_nodes.rc}' == '1'"
+  tags:
+  - nodereg

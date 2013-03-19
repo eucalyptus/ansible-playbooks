@@ -1,0 +1,58 @@
+# We use vnet_pub global (all) var to ensure all components are registered on their public interface(s)
+
+- name: Check Walrus Registration
+  action: shell /usr/sbin/euca_conf --list-services | grep -q walrus-${hostvars.{$item}.ansible_hostname}
+  ignore_errors: yes
+  register: walrus_check
+  with_items: ${groups.walrus}
+  tags:
+  - reg
+
+- name: Register Walrus
+  action: command /usr/sbin/euca_conf --no-scp --no-rsync --no-sync --register-walrus --partition walrus --host ${hostvars.{$item}.ansible_$vnet_pub.ipv4.address} --component walrus-${hostvars.{$item}.ansible_hostname}
+  with_items: ${groups.walrus} 
+  only_if: "'${walrus_check.rc}' == '1'"
+  tags:
+  - reg
+
+- name: Check Storage Registration
+  action: shell /usr/sbin/euca_conf --list-services | grep -q sc-${hostvars.{$item}.ansible_hostname}
+  ignore_errors: yes
+  register: sc_check
+  with_items: ${groups.storagecontroller}
+  tags:
+  - reg
+     
+- name: Register Storage Controller
+  action: command /usr/sbin/euca_conf --no-scp --no-rsync --no-sync --register-sc --partition $partition --host ${hostvars.{$item}.ansible_$vnet_pub.ipv4.address} --component sc-${hostvars.{$item}.ansible_hostname}
+  with_items: ${groups.storagecontroller}
+  only_if: "'${sc_check.rc}' == '1'"
+  tags:
+  - reg
+
+- name: Check Storage Registration
+  action: shell /usr/sbin/euca_conf --list-services | grep -q cc-${hostvars.{$item}.ansible_hostname}
+  ignore_errors: yes
+  register: cc_check
+  with_items: ${groups.clustercontroller}
+  tags:
+  - reg
+
+- name: Register Cluster Controller
+  action: command /usr/sbin/euca_conf --no-scp --no-rsync --no-sync --register-cluster --partition $partition --host ${hostvars.{$item}.ansible_$vnet_pub.ipv4.address} --component cc-${hostvars.{$item}.ansible_hostname}
+  with_items: ${groups.clustercontroller}
+  only_if: "'${cc_check.rc}' == '1'"
+  tags:
+  - reg
+
+- name: Copy keys on single frontend
+  action: command cp -f /var/lib/eucalyptus/keys/${partition}/$item /var/lib/eucalyptus/keys/
+  with_items: 
+  - cluster-cert.pem
+  - cluster-pk.pem
+  - node-cert.pem
+  - node-pk.pem
+  - vtunpass
+  tags:
+  - reg
+  - keys

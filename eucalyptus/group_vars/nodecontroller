@@ -1,0 +1,7 @@
+nc_port: 8775
+loglevel: INFO
+hypervisor: kvm
+use_virtio_root: 1
+use_virtio_disk: 1
+use_virtio_net: 1
+instance_path: /var/lib/eucalyptus/instances

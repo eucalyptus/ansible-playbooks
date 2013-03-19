@@ -1,0 +1,90 @@
+# This is the master playbook for deploying a single frontend cloud, most useful for testing and development.
+
+- hosts: nodecontroller 
+  tasks:
+    - include: common/tasks/packages.yml
+    - include: common/tasks/preconfig.yml
+    - include: node/tasks/node-preconfig.yml
+    - include: common/tasks/template-configuration.yml
+    - include: common/tasks/refresh-facts.yml
+  handlers:
+    - include: common/handlers/services.yml
+    - include: node/handlers/node-preconfig.yml
+  vars_files:
+    - ../../../rhn.yml
+    - vars/nodecontroller.yml
+    - vars/nodecontroller-net.yml
+
+- hosts: clustercontroller
+  tasks:
+    - include: common/tasks/packages.yml
+    - include: common/tasks/preconfig.yml
+    - include: common/tasks/template-configuration.yml
+  handlers:
+    - include: common/handlers/services.yml
+  vars_files:
+    - ../../../rhn.yml
+    - vars/clustercontroller.yml
+    - vars/nodecontroller-net.yml
+
+- hosts: storagecontroller
+  tasks:
+    - include: common/tasks/packages.yml
+    - include: common/tasks/preconfig.yml
+    - include: common/tasks/template-configuration.yml
+  handlers:
+    - include: common/handlers/services.yml
+  vars_files:
+    - ../../../rhn.yml
+    - vars/storagecontroller.yml
+    - vars/nodecontroller-net.yml
+# Since its single-frontend, have to be hacky with the vars. Need to move node controller networking vars into global to remove the need for above.
+
+- hosts: cloudcontroller
+  tasks:
+    - include: common/tasks/packages.yml
+    - include: common/tasks/preconfig.yml
+    - include: common/tasks/template-configuration.yml
+  handlers:
+    - include: common/handlers/services.yml
+  vars_files:
+    - ../../../rhn.yml
+    - vars/cloudcontroller.yml
+    - vars/nodecontroller-net.yml
+
+- hosts: walrus
+  tasks:
+    - include: common/tasks/packages.yml
+    - include: common/tasks/preconfig.yml
+    - include: common/tasks/template-configuration.yml
+  handlers:
+    - include: common/handlers/services.yml
+  vars_files:
+    - ../../../rhn.yml
+    - vars/walrus.yml
+    - vars/nodecontroller-net.yml
+
+- hosts: cloudcontroller
+  vars:
+    partition: az1
+  tasks:
+    - include: common/tasks/initialization.yml
+    - include: common/tasks/component-registration.yml
+    - include: common/tasks/creds.yml
+    - include: common/tasks/storage.yml
+  handlers:
+    - include: common/handlers/services.yml
+  vars_files:
+    - vars/cloudcontroller.yml
+
+- hosts: clustercontroller
+  tasks:
+    - include: cluster/tasks/node-registration.yml
+    - include: cluster/tasks/node-key-fetch.yml
+  vars_files:
+    - vars/nodecontroller-net.yml
+    - vars/clustercontroller.yml
+
+- hosts: nodecontroller
+  tasks:
+    - include: node/tasks/node-key-copy.yml

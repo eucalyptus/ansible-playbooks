@@ -1,0 +1,8 @@
+    - name: cleanrestart of cc
+      command: service eucalyptus-cc cleanrestart
+
+    - name: cleanstop of cc
+      command: service eucalyptus-cc cleanstop
+
+    - name: cleanstart of cc
+      command: service eucalyptus-cc cleanstart

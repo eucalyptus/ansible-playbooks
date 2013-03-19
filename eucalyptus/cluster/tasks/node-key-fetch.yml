@@ -1,0 +1,9 @@
+  - name: fetch the keys for a copy
+    action: fetch src=/var/lib/eucalyptus/keys/$item dest=/tmp
+    with_items: 
+        - cloud-cert.pem
+        - cluster-cert.pem
+        - node-cert.pem
+        - node-pk.pem
+    tags:
+    - keys
