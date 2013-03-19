@@ -1,0 +1,76 @@
+# Not working yet.
+
+- hosts: nodecontroller 
+  tasks:
+    - include: common/tasks/packages.yml
+    - include: common/tasks/preconfig.yml
+    - include: node/tasks/node-preconfig.yml
+    - include: common/tasks/template-configuration.yml
+    - include: common/tasks/refresh-facts.yml
+  handlers:
+    - include: common/handlers/handlers.yml
+  vars_files:
+    - ../../../rhn.yml
+    - vars/nodecontroller.yml
+
+- hosts: clustercontroller
+  tasks:
+    - include: common/tasks/packages.yml
+    - include: common/tasks/preconfig.yml
+    - include: common/tasks/template-configuration.yml
+  handlers:
+    - include: common/handlers/handlers.yml
+  vars_files:
+    - ../../../rhn.yml
+    - vars/clustercontroller.yml
+
+- hosts: storagecontroller
+  tasks:
+    - include: common/tasks/packages.yml
+    - include: common/tasks/preconfig.yml
+    - include: common/tasks/template-configuration.yml
+  handlers:
+    - include: common/handlers/handlers.yml
+  vars_files:
+    - ../../../rhn.yml
+    - vars/storagecontroller.yml
+
+- hosts: cloudcontroller
+  tasks:
+    - include: common/tasks/packages.yml
+    - include: common/tasks/preconfig.yml
+    - include: common/tasks/template-configuration.yml
+  handlers:
+    - include: common/handlers/handlers.yml
+  vars_files:
+    - ../../../rhn.yml
+    - vars/cloudcontroller.yml
+
+- hosts: walrus
+  tasks:
+    - include: common/tasks/packages.yml
+    - include: common/tasks/preconfig.yml
+    - include: common/tasks/template-configuration.yml
+  handlers:
+    - include: common/handlers/handlers.yml
+  vars_files:
+    - ../../../rhn.yml
+    - vars/walrus.yml
+
+- hosts: cloudcontroller
+  vars:
+    partition: az1
+  tasks:
+    - include: common/tasks/initialization.yml
+    - include: common/tasks/component-registration.yml
+  handlers:
+    - include: common/handlers/handlers.yml
+
+- hosts: clustercontroller
+  tasks:
+    - include: cluster/tasks/node-registration.yml
+    - include: cluster/tasks/node-key-fetch.yml
+
+- hosts: nodecontroller
+  tasks:
+    - include: node/tasks/node-key-copy.yml
