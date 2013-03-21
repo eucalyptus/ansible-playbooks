@@ -14,7 +14,6 @@
       instance_type: c1.medium
       security_group: default
       image: emi-2480394D
-      what: no
 
   tasks:
     - name: Launch instance 
@@ -52,9 +51,6 @@
       - http://downloads.eucalyptus.com/software/eucalyptus/${euca_version}/rhel/6/x86_64/elrepo-release-6.noarch.rpm
       tags:
       - geturl
-
-    - name: debug
-      action: debug msg="this is my variable value $what"
 
     - name: Install the repo RPMs
       action: command rpm -Uvh --force /tmp/$item
