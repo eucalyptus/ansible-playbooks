@@ -1,0 +1,56 @@
+- name: Stage console instance(s)
+  hosts: 127.0.0.1
+  connection: local
+  user: root
+  gather_facts: false
+
+  vars:
+    - keypair: admin
+    - instance_type: c1.xlarge
+    - security_group: default
+    - image: emi-2480394D 
+    - ansible_python_interpreter: /usr/bin/python2
+
+  tasks:
+    - name: Launch instance
+      local_action: ec2 keypair=$keypair group=$security_group instance_type=$instance_type image=$image wait=true
+      register: ec2
+
+    - name: Add new instance to host group
+      local_action: add_host hostname=${item.public_ip} groupname=mongos
+      with_items: ${ec2.instances}
+
+    - name: Add a generic wait period
+      local_action: pause minutes=2
+
+- name: Configure the instance
+  hosts: mongos
+  user: root
+  gather_facts: true
+
+  vars_files:
+    - vars/mongodb.yml
+    
+  tasks:
+    - name: Check NTP
+      action: service name=ntpd state=started
+
+    - name: Copy MongoDB repo file
+      action: copy src=files/10gen.repo dest=/etc/yum.repos.d/10gen.repo
+
+    - name: Install packages
+      action: yum pkg=$item state=latest
+      with_items: 
+        - mongo-10gen
+        - mongo-10gen-server
+
+    - name: Template the MongoDB configuration file
+      action: template src=templates/mongod.conf.j2 dest=/etc/mongod.conf
+      
+    - name: Prepare the db directory
+      action: file path=${db_path} state=directory recurse=yes owner=mongod group=mongod mode=0755
+
+    - name: Configure MongoDB
+      action: service name=mongod state=started enabled=yes 
+       
+
