@@ -1,4 +1,22 @@
 clchost: 10.104.1.130
-port: 8888
+clcport: 8443
+uiport: 8888
 lang: en_US
+helpurl:
+supporturl:
 euca_version: 3.2
+m1smallcpu: 2
+m1smallmem: 1024
+m1smalldisk: 10
+c1mediumcpu: 4
+c1mediummem: 1024
+c1mediumdisk: 10
+m1largecpu: 4
+m1largemem: 2048
+m1largedisk: 15
+m1xlargecpu: 4
+m1xlargemem: 4096
+m1xlargedisk: 20
+c1xlargecpu: 6
+c1xlargemem: 4096
+c1xlargedisk: 25
