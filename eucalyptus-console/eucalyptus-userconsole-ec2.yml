@@ -10,9 +10,9 @@
 
   vars:
       keypair: admin
-      instance_type: m1.small
+      instance_type: c1.medium
       security_group: default
-      image: emi-048B3A37
+      image: emi-2480394D 
 
   tasks:
     - name: Launch instance 
@@ -22,6 +22,9 @@
     - name: Add new instance to host group
       local_action: add_host hostname=${item.public_ip} groupname=launched 
       with_items: ${ec2.instances}
+
+    - name: Wait for a while 
+      local_action: pause minutes=2
 
 - name: Configure instance
   hosts: launched
@@ -60,17 +63,7 @@
       notify:
       - restart console 
 
-    - name: Configure User Console Endpoint
-      action: lineinfile dest=/etc/eucalyptus-console/console.ini state=present regexp=^clchost line=clchost:" ${clchost}"
-      notify:
-      - restart console
-
-    - name: Configure User Console Port
-      action: lineinfile dest=/etc/eucalyptus-console/console.ini state=present regexp=^uiport line=uiport:" ${port}"
-      notify:
-      - restart console
-
-    - name: Configure User Console Language
-      action: lineinfile dest=/etc/eucalyptus-console/console.ini state=present regexp=^language line=language:" ${lang}"
+    - name: Template the User Console Configuration
+      action: template src=templates/console.ini.j2 dest=/etc/eucalyptus-console/console.ini 
       notify:
       - restart console
