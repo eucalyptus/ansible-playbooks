@@ -62,18 +62,8 @@
     - name: Install Eucalyptus User Console
       action: yum pkg=eucalyptus-console state=latest
 
-    - name: Configure User Console Endpoint
-      action: lineinfile dest=/etc/eucalyptus-console/console.ini state=present regexp=^clchost line=clchost:" ${clchost}"
-      notify:
-      - restart console
-
-    - name: Configure User Console Port
-      action: lineinfile dest=/etc/eucalyptus-console/console.ini state=present regexp=^uiport line=uiport:" ${port}"
-      notify:
-      - restart console
-
-    - name: Configure User Console Language
-      action: lineinfile dest=/etc/eucalyptus-console/console.ini state=present regexp=^language line=language:" ${lang}"
+    - name: Template User Console Configuration File
+      action: template src=templates/console.ini.j2 dest=/etc/eucalyptus-console/console.ini
       notify:
       - restart console
 
