@@ -73,6 +73,10 @@ pidfilepath = /var/run/mongodb/mongod.pid
 
 # Replication Options
 
+bind_ip = {{ ansible_default_ipv4.address }},127.0.0.1
+
+replSet = {{ replicaset }}
+
 # in replicated mongo databases, specify here whether this is a slave or master
 #slave = true
 #source = master.example.com

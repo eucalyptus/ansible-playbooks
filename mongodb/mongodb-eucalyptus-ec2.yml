@@ -1,24 +1,26 @@
 - name: Stage console instance(s)
-  hosts: 127.0.0.1
+  hosts: local
   connection: local
   user: root
   gather_facts: false
 
   vars:
-    - keypair: admin
-    - instance_type: c1.xlarge
-    - security_group: default
-    - image: emi-2480394D 
-    - ansible_python_interpreter: /usr/bin/python2
+    - keypair: lwade
+    - instance_type: c1.medium
+    - security_group: mongodb
+    - image: emi-C1D339FC 
 
   tasks:
     - name: Launch instance
-      local_action: ec2 keypair=$keypair group=$security_group instance_type=$instance_type image=$image wait=true
+      local_action: ec2 keypair=$keypair group=$security_group instance_type=$instance_type image=$image wait=true count=5
       register: ec2
 
     - name: Add new instance to host group
       local_action: add_host hostname=${item.public_ip} groupname=mongos
       with_items: ${ec2.instances}
+
+    - name: Take first instance as primary for configuration of replica set
+      local_action: add_host hostname=${ec2.instances[0].public_ip} groupname=mongopri
 
     - name: Add a generic wait period
       local_action: pause minutes=2
@@ -34,6 +36,11 @@
   tasks:
     - name: Check NTP
       action: service name=ntpd state=started
+
+    - name: Template hosts file
+      action: template src=templates/hosts.j2 dest=/etc/hosts
+      tags:
+        - template
 
     - name: Copy MongoDB repo file
       action: copy src=files/10gen.repo dest=/etc/yum.repos.d/10gen.repo
@@ -52,5 +59,18 @@
 
     - name: Configure MongoDB
       action: service name=mongod state=started enabled=yes 
-       
+    
+- name: Configure the replica set
+  hosts: mongopri
+  user: root
+  gather_facts: true
+  
+  vars_files:
+    - vars/mongodb.yml
+    
+  tasks: 
+    - name: Template the replica set script
+      action: template src=templates/replicateset.js.j2 dest=/root/replicaset.js
 
+    - name: Initiate replica set
+      action: command mongo /root/replicaset.js

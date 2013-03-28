@@ -1,0 +1,10 @@
+127.0.0.1       localhost.localdomain localhost
+::1             localhost6.localdomain6 localhost6
+
+# MongoDB ReplicaSet Members
+{% if 'mongos' in group_names %}
+{% for host in groups['mongos'] %} 
+{{ hostvars[host]['ansible_default_ipv4']['address'] }} {{ hostvars[host]['ansible_hostname'] }}
+{% endfor %} 
+{% endif %} 
+
