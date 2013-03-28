@@ -1,1 +1,2 @@
 db_path: /media/ephemeral0/db
+replicaset: testrs
