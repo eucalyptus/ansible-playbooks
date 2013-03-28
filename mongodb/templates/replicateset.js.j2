@@ -1,0 +1,17 @@
+{% set id = 0 %}
+conf = {
+    _id : "{{ replicaset }}",
+    members : [
+        {% for host in groups['mongos'] -%}
+        {
+            _id : {{id + loop.index0 }},
+            host : "{{ hostvars[host]['ansible_default_ipv4']['address'] }}:27017"
+        }
+        {%- if loop.last -%}
+        {% else %},
+        {% endif %}
+        {% endfor %}
+    
+    ]
+}
+rs.initiate(conf)
