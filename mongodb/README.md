@@ -1,6 +1,7 @@
 MongoDB EC2/Eucalyptus deployment example
 =========================================
-Built against Ansible 1.1 
+* Built against Ansible 1.1 
+* Assumes RHEL6 or CentOS6 image.  Will add support for other distros in the future.
 
 This sample playbook demonstrates provisioning of a MongoDB replicaset in Eucalyptus or EC2.  
 It uses ephemeral space on instances as the db store.  Use a minimum of two instances, the playbook will scale accordingly.
