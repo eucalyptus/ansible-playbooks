@@ -37,7 +37,7 @@
      
   handlers:
     - name: restart console
-      action: service name=eucalyptus-console state=restarted
+      action: service name=eucalyptus-console-${console_version} state=restarted
  
   tasks:
     - name: Ensure NTP is up and running

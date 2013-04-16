@@ -5,6 +5,7 @@ lang: en_US
 helpurl:
 supporturl:
 euca_version: 3.2
+console_version: 3.2.1
 m1smallcpu: 2
 m1smallmem: 1024
 m1smalldisk: 10

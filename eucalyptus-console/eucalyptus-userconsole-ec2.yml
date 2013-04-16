@@ -9,10 +9,10 @@
   gather_facts: false
 
   vars:
-      keypair: admin
+      keypair: lwade
       instance_type: c1.medium
       security_group: default
-      image: emi-2480394D 
+      image: emi-C1D339FC 
 
   tasks:
     - name: Launch instance 
@@ -59,7 +59,7 @@
       - elrepo-release-6.noarch.rpm
  
     - name: Install Eucalyptus User Console
-      action: yum pkg=eucalyptus-console state=latest
+      action: yum pkg=eucalyptus-console-${console_version} state=latest
       notify:
       - restart console 
 
