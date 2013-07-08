@@ -1,0 +1,9 @@
+    - name: set tuned profile
+      action: command tuned-adm profile latency-performance
+    
+    - name: Install the CLC packages
+      action: yum name=eucalyptus-cloud state=present
+
+    - name: Template the configuration file
+      action: template src=../../common/templates/eucalyptus.conf.j2 dest=/etc/eucalyptus.conf
+

@@ -1,0 +1,10 @@
+    - name: set tuned profile
+      action: command tuned-adm profile enterprise-storage
+
+    - name: Install the Walrus packages
+      action: yum name=eucalyptus-walrus state=present
+
+    - name: Template the configuration file
+      action: template src=../../common/templates/eucalyptus.conf.j2 dest=/etc/eucalyptus.conf
+
+

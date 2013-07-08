@@ -1,0 +1,51 @@
+  - name: Create a temporary directory
+    action: command mktemp -d 
+    register: temp
+
+  - name: Download the repo RPMs
+    action: get_url url=$item dest=${temp.stdout} thirsty=yes
+    with_items:
+    - http://downloads.eucalyptus.com/software/eucalyptus/${euca_version}/rhel/6/x86_64/eucalyptus-release-${euca_version}.noarch.rpm
+    - http://downloads.eucalyptus.com/software/euca2ools/${eucatools_version}/rhel/6/x86_64/euca2ools-release-${eucatools_version}.noarch.rpm
+    - http://downloads.eucalyptus.com/software/eucalyptus/${euca_version}/rhel/6/x86_64/epel-release-6.noarch.rpm
+    - http://downloads.eucalyptus.com/software/eucalyptus/${euca_version}/rhel/6/x86_64/elrepo-release-6.noarch.rpm
+    tags:
+    - geturl,packages
+
+  - name: Install the repo RPMs
+    action: command yum -y localinstall ${temp.stdout}/$item
+    with_items:
+    - eucalyptus-release-${euca_version}.noarch.rpm
+    - euca2ools-release-${eucatools_version}.noarch.rpm
+    - epel-release-6.noarch.rpm
+    - elrepo-release-6.noarch.rpm
+    tags:
+    - packages
+
+  - name: Remove temporary directory
+    action: file path=${temp.stdout} state=absent 
+    tags:
+    - packages
+
+  - name: Install packages
+    action: yum pkg=$item state=installed
+    with_items:
+    - libselinux-python
+    - tuned
+    - unzip
+    - ntp
+    tags:
+    - packages
+
+  - name: Ensure SELinux is disabled
+    action: selinux policy=targeted state=permissive
+   
+  - name: Turn on NTP and start on boot
+    action: service name=ntpd enabled=yes state=started
+    tags:
+    - ntp
+
+  - name: disable firewall
+    action: service name=iptables enabled=no state=stopped
+    tags:
+    - firewall
