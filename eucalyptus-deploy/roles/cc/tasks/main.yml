@@ -5,4 +5,5 @@
       action: yum name=eucalyptus-cc state=present
       
     - name: Template the configuration file
-      action: template src=../../common/templates/eucalyptus.conf.j2 dest=/etc/eucalyptus.conf 
+      action: template src=../../common/templates/eucalyptus.conf.j2 dest=/etc/eucalyptus/eucalyptus.conf 
+      notify: restart cc

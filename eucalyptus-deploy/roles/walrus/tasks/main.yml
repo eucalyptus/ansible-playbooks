@@ -6,5 +6,6 @@
 
     - name: Template the configuration file
       action: template src=../../common/templates/eucalyptus.conf.j2 dest=/etc/eucalyptus.conf
+      notify: restart eucalyptus cloud
 
 

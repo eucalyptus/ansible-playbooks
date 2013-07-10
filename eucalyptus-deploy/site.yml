@@ -1,4 +1,4 @@
-# Playbook for the cloud deployment.
+# Playbook for the cloud deployment. Ordering is important as a deployment is sequential. 
 
 - hosts: nc
   sudo: yes
@@ -8,14 +8,6 @@
     - common
     - nodes
 
-- hosts: walrus
-  sudo: yes
-  vars_files:
-    - vars/main.yml
-  roles:
-    - common
-    - walrus
-    
 - hosts: cc
   vars_files:
     - vars/main.yml
@@ -31,6 +23,14 @@
   roles:
     - common
     - sc
+
+- hosts: walrus
+  sudo: yes
+  vars_files:
+    - vars/main.yml
+  roles:
+    - common
+    - walrus
  
 - hosts: clc
   vars_files:
@@ -38,4 +38,4 @@
   sudo: yes
   roles:
     - common
-    - clc 
+    - clc

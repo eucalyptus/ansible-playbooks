@@ -11,3 +11,4 @@ vnet_addrspernet: 32
 vnet_localip:
 vnet_pri: em2
 vnet_pub: em1
+hypervisor: kvm

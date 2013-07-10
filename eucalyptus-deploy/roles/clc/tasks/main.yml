@@ -1,9 +1,30 @@
     - name: set tuned profile
       action: command tuned-adm profile latency-performance
     
+    # Here we use a state changed as an indicator of a new install
     - name: Install the CLC packages
       action: yum name=eucalyptus-cloud state=present
+      register: installed
 
     - name: Template the configuration file
-      action: template src=../../common/templates/eucalyptus.conf.j2 dest=/etc/eucalyptus.conf
+      action: template src=../../common/templates/eucalyptus.conf.j2 dest=/etc/eucalyptus/eucalyptus.conf
+      notify: restart eucalyptus cloud
 
+    # Only initialize the database if packages were installed
+    # (its a new environment)
+    - name: Initialize the database
+      action: command /usr/sbin/euca_conf --initialize
+      when: installed.changed
+      notify: restart eucalyptus cloud
+
+    # Now register components. We need checks here. 
+    - name: Register Walruses
+      action: command /usr/sbin/euca_conf --no-scp --no-rsync --no-sync --register-walrus --partition walrus --host ${hostvars.{$item}.ansible_$vnet_pub.ipv4.address} --component walrus-${hostvars.{$item}.ansible_hostname} 
+      with_items: ${groups.walrus}
+
+    - name: Register SC
+      action: command /usr/sbin/euca_conf --no-scp --no-rsync --no-sync --register-sc --partition $partition --host ${hostvars.{$item}.ansible_$vnet_pub.ipv4.address} --component sc-${hostvars.{$item}.ansible_hostname}
+      with_items: ${groups.storagecontroller}
+
+    - name: Register CC
+      action: command /usr/sbin/euca_conf --no-scp --no-rsync --no-sync --register-cluster --partition $partition --host ${hostvars.{$item}.ansible_$vnet_pub.ipv4.address} --component cc-${hostvars.{$item}.ansible_hostname}
