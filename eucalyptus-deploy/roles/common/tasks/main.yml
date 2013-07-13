@@ -1,32 +1,19 @@
-  - name: Create a temporary directory
-    action: command mktemp -d 
-    register: temp
-
-  - name: Download the repo RPMs
-    action: get_url url=$item dest=${temp.stdout} thirsty=yes
+  - name: Copy RPM GPG keys
+    action: copy src={{ item }} dest=/etc/pki/rpm-gpg/
     with_items:
-    - http://downloads.eucalyptus.com/software/eucalyptus/${euca_version}/rhel/6/x86_64/eucalyptus-release-${euca_version}.noarch.rpm
-    - http://downloads.eucalyptus.com/software/euca2ools/${eucatools_version}/rhel/6/x86_64/euca2ools-release-${eucatools_version}.noarch.rpm
-    - http://downloads.eucalyptus.com/software/eucalyptus/${euca_version}/rhel/6/x86_64/epel-release-6.noarch.rpm
-    - http://downloads.eucalyptus.com/software/eucalyptus/${euca_version}/rhel/6/x86_64/elrepo-release-6.noarch.rpm
-    tags:
-    - geturl,packages
-
-  - name: Install the repo RPMs
-    action: command yum -y localinstall ${temp.stdout}/$item
+    - RPM-GPG-KEY-EPEL-6
+    - RPM-GPG-KEY-elrepo.org
+    - eucalyptus-release.pub
+    - euca2ools-release.pub
+  
+  - name: Template repo files
+    action: template src={{ item }}.j2 dest=/etc/yum.repos.d/{{ item }}
     with_items:
-    - eucalyptus-release-${euca_version}.noarch.rpm
-    - euca2ools-release-${eucatools_version}.noarch.rpm
-    - epel-release-6.noarch.rpm
-    - elrepo-release-6.noarch.rpm
-    tags:
-    - packages
-
-  - name: Remove temporary directory
-    action: file path=${temp.stdout} state=absent 
-    tags:
-    - packages
-
+    - eucalyptus-release.repo
+    - euca2ools-release.repo
+    - elrepo.repo
+    - epel.repo
+  
   - name: Install packages
     action: yum pkg=$item state=installed
     with_items:

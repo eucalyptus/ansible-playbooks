@@ -26,57 +26,43 @@ CLOUD_OPTS=""
 ###########################################################################
 
 # The level of logging output.  Valid settings are, in descending order of
-# verbosity: EXTREME, TRACE, DEBUG, INFO, WARN, ERROR, and FATAL.  The
-# default is INFO.
-#LOGLEVEL="INFO"
+# verbosity, DEBUG, INFO, WARN, ERROR, and FATAL.  The default is DEBUG.
+LOGLEVEL="{{ loglevel }}"
 
-# The number of old log files to keep when rotating logs, in range [0-999].
-# The default is 10. When set to 0, no rotation is performed and log size
-# limit is (LOGMAXSIZE, below) is not enforced.
-#LOGROLLNUMBER="10"
-
-# The maximum size of the log file, in bytes. 100MB by default. For this
-# size to be enforced, LOGROLLNUMBER, above, must be 1 or higher. If log
-# rotation is performed by an outside tool, either set LOGROLLNUMBER to 0
-# or set this limit to a large value.
-#LOGMAXSIZE=104857600
+# The number of old log files to keep when rotating logs.  The default
+# is 4.
+#LOGROLLNUMBER="4"
 
 # On a NC, this defines the TCP port on which the NC will listen.
 # On a CC, this defines the TCP port on which the CC will contact NCs.
-NC_PORT="8775"
+NC_PORT="{{ nc_port }}"
 
 ###########################################################################
 # CLUSTER CONTROLLER (CC) CONFIGURATION
 ###########################################################################
 
 # The TCP port on which the CC will listen.
-CC_PORT="8774"
+CC_PORT="{{ cc_port }}"
 
 # The scheduling policy that the CC uses to choose the NC on which to
 # run each new instance.  Valid settings include GREEDY and ROUNDROBIN.
 # The default scheduling policy is ROUNDROBIN.
-SCHEDPOLICY="ROUNDROBIN"
+SCHEDPOLICY="{{ schedpolicy }}"
 
 # A space-separated list of IP addresses for all the NCs that this CC
 # should communicate with.  The ``euca_conf --register-nodes'' command
 # manipulates this setting.
+{% if 'clustercontroller' in group_names %}
 {% set iface = 'ansible_' + bridge %}
-{% if 'cc' in group_names %}
-NODES="
-{%- for host in groups['nc'] -%}
-{{ hostvars[host][iface]['ipv4']['address']  }}{{ ' ' }}
-{%- if loop.last -%}
-{{ hostvars[host][iface]['ipv4']['address']  }}"
-{% endif %}
-{%- endfor -%}
-{% else %}
-NODES=""
+{% for host in groups['nodecontroller'] -%}
+NODES="{{ hostvars[host][iface]['ipv4']['address'] }}"
+{%- endfor %}
 {% endif %}
 
 # When multiple CCs reside in the same layer 2 broadcast domain, change
 # this setting to "Y" to disable tunneling.  This setting has no effect
 # in Static or System modes.
-#DISABLE_TUNNELING="N"
+DISABLE_TUNNELING="{{ disable_tunneling }}"
 
 # The location of the NC service.  The default is
 # axis2/services/EucalyptusNC
@@ -107,13 +93,13 @@ HYPERVISOR="{{ hypervisor }}"
 # KVM hypervisor.
 
 # If "1", use Virtio for the root file system
-USE_VIRTIO_ROOT="1"
+USE_VIRTIO_ROOT="{{ use_virtio_root }}"
 
 # If "1", use Virtio for dynamic block volumes
-USE_VIRTIO_DISK="1"
+USE_VIRTIO_DISK="{{ use_virtio_disk }}"
 
 # If "1", use Virtio for the network card
-USE_VIRTIO_NET="1"
+USE_VIRTIO_NET="{{ use_virtio_net }}"
 
 # The amount of memory, in megabytes, that Eucalyptus is allowed to
 # allocate to instances running on this system.  The default value of
@@ -152,21 +138,13 @@ USE_VIRTIO_NET="1"
 
 # The directory where the NC will store instances' root filesystems,
 # ephemeral storage, and cached copies of images.
-INSTANCE_PATH="/var/lib/eucalyptus/instances"
+INSTANCE_PATH="{{ instance_path }}"
 
 # If euca-bundle-upload, euca-check-bucket, or euca-delete-bundle do
 # not appear in the NC's search PATH then specify their locations here.
 #NC_BUNDLE_UPLOAD_PATH="/usr/bin/euca-bundle-upload"
 #NC_CHECK_BUCKET_PATH="/usr/bin/euca-check-bucket"
 #NC_DELETE_BUNDLE_PATH="/usr/bin/euca-delete-bundle"
-
-# The maximum amount of time, in seconds, that an instance will remain
-# in a migration-ready state on a source NC while awaiting the
-# preparation of a destination NC for a migration. After this time
-# period, the migration request will be terminated and the any
-# preparation on the source NC will be rolled back. Default is 15
-# minutes.
-#NC_MIGRATION_READY_THRESHOLD=900
 
 ###########################################################################
 # NETWORKING CONFIGURATION
@@ -184,17 +162,19 @@ INSTANCE_PATH="/var/lib/eucalyptus/instances"
 VNET_MODE="{{ network_mode }}"
 
 # The name of the network interface that is on the same network as
-# the NCs. The default is "eth0".
+# the NCs.  In Managed and Managed (No VLAN) modes this may need to be
+# a bridge.  The default is "eth0".
 # Networking modes: Static, Managed, Managed (No VLAN)
 VNET_PRIVINTERFACE="{{ vnet_pri }}"
 
 # On a CC, this is the name of the network interface that is connected
-# to the "public" network.  When tunnelling is enabled, this must be
-# a bridge.  The default is "eth0".
+# to the "public" network.  The default is "eth0".
 # Networking modes: Managed, Managed (No VLAN)
 #
 # On an NC, this is the name of the network interface that is connected
-# to the same network as the CC.  The default is "eth0".
+# to the same network as the CC.  Depending on the hypervisor's
+# configuration, this may be a bridge or a physical interface that is
+# attached to the bridge.  The default is "eth0".
 # Networking modes: Managed
 VNET_PUBINTERFACE="{{ vnet_pub }}"
 
@@ -230,12 +210,6 @@ VNET_ADDRSPERNET="{{ vnet_addrspernet }}"
 # Networking modes: Static, Managed, Managed (No VLAN)
 VNET_DNS="{{ vnet_dns }}"
 
-# The search domain to supply to instance in DHCP responses.
-# NOTE: This should always be cloud.vmstate.instance_subdomain + ".internal",
-# and may be overridden by the CLC property in a future release. See EUCA-4226
-# Networking modes: Static, Managed, Managed (No VLAN)
-#VNET_DOMAINNAME="eucalyptus.internal"
-
 # The network broadcast address and default gateway to supply to instances
 # in DHCP responses.
 # Networking modes: Static
@@ -249,7 +223,7 @@ VNET_DNS="{{ vnet_dns }}"
 {% if vnet_localip %}
 VNET_LOCALIP="{{ vnet_localip }}"
 {% else %}
-#VNET=LOCALIP=""
+#VNET_LOCALIP=""
 {% endif %}
 
 # The ISC DHCP server executable to use.  The default is
@@ -261,3 +235,4 @@ VNET_DHCPDAEMON="/usr/sbin/dhcpd41"
 # The default is "dhcpd".
 # Networking modes: Static, Managed, Managed (No VLAN)
 #VNET_DHCPUSER="dhcpd"
+

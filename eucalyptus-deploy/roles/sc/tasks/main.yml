@@ -2,9 +2,9 @@
       action: command tuned-adm profile enterprise-storage
 
     - name: Install the SC packages
-      action: yum name=eucalyptus-sc state=present
+      action: yum name=eucalyptus-sc state=present enablerepo=eucalyptus-release,euca2ools-release,elrepo,epel
 
     - name: Template the configuration file
       action: template src=../../common/templates/eucalyptus.conf.j2 dest=/etc/eucalyptus/eucalyptus.conf
-      notify: restart eucalyptus cloud
-
+      notify: 
+      - restart eucalyptus cloud

@@ -1,2 +1,2 @@
-    - name: restart eucalyptus cloud
-      action: service name=eucalyptus-cloud state=restarted
+- name: restart eucalyptus cloud
+  service: name=eucalyptus-cloud state=restarted

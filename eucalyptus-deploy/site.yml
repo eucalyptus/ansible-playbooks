@@ -1,17 +1,17 @@
 # Playbook for the cloud deployment. Ordering is important as a deployment is sequential. 
 
 - hosts: nc
-  sudo: yes
   vars_files:
     - vars/main.yml
   roles:
     - common
-    - nodes
+    - nc
+  post_tasks:
+    - action: setup
 
 - hosts: cc
   vars_files:
     - vars/main.yml
-  sudo: yes
   roles:
     - common
     - cc
@@ -19,13 +19,11 @@
 - hosts: sc
   vars_files:
     - vars/main.yml
-  sudo: yes
   roles:
     - common
     - sc
 
 - hosts: walrus
-  sudo: yes
   vars_files:
     - vars/main.yml
   roles:
@@ -35,7 +33,36 @@
 - hosts: clc
   vars_files:
     - vars/main.yml
-  sudo: yes
   roles:
     - common
     - clc
+
+- hosts: walrus
+  vars_files:
+    - vars/main.yml
+  tasks:
+  - include: roles/walrus/tasks/walrus-keys.yml
+
+- hosts: sc
+  vars_files:
+    - vars/main.yml
+  tasks:
+  - include: roles/sc/tasks/sc-keys.yml
+
+- hosts: clc
+  vars_files:
+    - vars/main.yml
+  tasks:
+  - include: roles/clc/tasks/component-reg.yml
+
+- hosts: cc
+  vars_files:
+    - vars/main.yml
+  tasks:
+  - include: roles/cc/tasks/cluster-reg.yml 
+  
+- hosts: nc
+  vars_files:
+    - vars/main.yml
+  tasks:
+  - include: roles/nc/tasks/nc-keys.yml 

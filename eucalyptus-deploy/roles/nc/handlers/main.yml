@@ -1,0 +1,11 @@
+- name: restart networking services
+  service: name=network state=restarted
+
+- name: restart libvirt
+  service: name=libvirtd state=restarted
+
+- name: start nc 
+  service: name=eucalyptus-nc state=started
+
+- name: restart nc
+  service: name=eucalyptus-nc state=restarted

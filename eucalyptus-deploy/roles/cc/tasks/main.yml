@@ -2,8 +2,14 @@
       action: command tuned-adm profile latency-performance
 
     - name: Install the CC packages
-      action: yum name=eucalyptus-cc state=present
+      action: yum name=eucalyptus-cc state=present enablerepo=eucalyptus-release,euca2ools-release,elrepo,epel
+
       
     - name: Template the configuration file
-      action: template src=../../common/templates/eucalyptus.conf.j2 dest=/etc/eucalyptus/eucalyptus.conf 
-      notify: restart cc
+      action: template src=../../common/templates/eucalyptus.conf.j2 dest=/etc/eucalyptus/eucalyptus.conf
+
+    - name: Restart CC
+      action: service name=eucalyptus-cc state=started
+
+    - name: Wait for CC services
+      action: wait_for port=8774 delay=10
