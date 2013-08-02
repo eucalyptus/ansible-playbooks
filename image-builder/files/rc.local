@@ -1,0 +1,84 @@
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+
+# since ephemeral or swap may not be mounted or on different devices
+# (specially on xen) let's look for them. This is fairly hackish.
+if ! swapon -s|grep partition > /dev/null ; then
+    # no swap partition
+    for x in `ls /dev/[xvsh]*d[a-z]3` ; do
+        swapon $x 2> /dev/null
+    done
+fi
+if ! mount | cut -f 1 -d ' '|grep /dev|grep 2 > /dev/null ; then
+    mkdir -p /media/ephemeral0
+    if [ -d /media/ephemeral0 ]; then
+        if [ -z "`ls /media/ephemeral0/*`" ]; then
+            # try to mount only if the mount point is empty
+            for x in `ls /dev/[xvsh]*d[a-z]2` ; do
+                mount $x /media/ephemeral0 2> /dev/null
+            done
+        fi
+    fi
+fi
+
+# load pci hotplug for dynamic disk attach in KVM (for EBS)
+depmod -a
+modprobe acpiphp || true
+
+# Create the host keys for the SSH server
+for key_type in rsa dsa; do
+    if [ ! -f /etc/ssh/ssh_host_${key_type}_key ]; then
+        ssh-keygen -t ${key_type} -N '' -f /etc/ssh/ssh_host_${key_type}_key
+    fi
+done
+
+if [ -e /etc/init.d/sshd ]; then
+    service sshd restart
+else
+    service ssh restart
+fi
+
+# simple attempt to get the user ssh key using the meta-data service
+mkdir -p /root/.ssh
+echo >> /root/.ssh/authorized_keys
+curl --retry 3 --retry-delay 10 -m 45 -s http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key | grep 'ssh-rsa' >> /root/.ssh/authorized_keys
+echo "AUTHORIZED_KEYS:"
+echo "************************"
+cat /root/.ssh/authorized_keys
+echo "************************"
+
+# set the hostname to something sensible
+META_HOSTNAME="`curl -s http://169.254.169.254/latest/meta-data/local-hostname`"
+META_IP="`curl -s http://169.254.169.254/latest/meta-data/local-ipv4`"
+
+if [ ${META_HOSTNAME} = ${META_IP} ]; then
+        META_HOSTNAME="`echo $META_HOSTNAME | sed -e 's/\./-/g' | xargs -I {} echo "ip-{}"`"
+fi
+
+hostname $META_HOSTNAME
+echo >> /etc/hosts
+echo "${META_IP}   ${META_HOSTNAME}" >> /etc/hosts
+
+
+# check if the user-data is a script, and if so execute it
+TMP_FILE="/tmp/user-data-$$"
+curl --retry 3 --retry-delay 10 -m 60 -o $TMP_FILE http://169.254.169.254/latest/user-data
+if [ -s $TMP_FILE ]; then
+    echo "Downloaded user data in $TMP_FILE"
+    if [ "`head -c 2 $TMP_FILE`" = "#!" ]; then
+        chmod 700 $TMP_FILE
+        echo "User data is a script: executing it"
+        $TMP_FILE > /root/user-data.out 2>&1 
+    fi
+fi
+
+exit 0

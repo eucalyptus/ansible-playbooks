@@ -1,0 +1,7 @@
+{% set iface = 'ansible_' + bridge_iface %}
+{% set chosenif = hostvars[inventory_hostname][iface] %}
+DEVICE={{ bridge }}
+TYPE=Bridge
+BOOTPROTO=dhcp
+ONBOOT=yes
+DELAY=0

@@ -1,0 +1,8 @@
+{% set iface = 'ansible_' + bridge_iface %}
+{% set chosenmac = hostvars[inventory_hostname][iface] %}
+DEVICE={{ bridge_iface }}
+HWADDR={{ chosenmac.macaddress }}
+ONBOOT=yes
+BRIDGE={{ bridge }}
+NM_CONTROLLED=no
+
