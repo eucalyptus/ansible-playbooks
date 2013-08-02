@@ -1,0 +1,6 @@
+- name: Copy keys to Walruses
+  action: copy src=/tmp/{{ item }} dest=/var/lib/eucalyptus/keys/ owner=eucalyptus group=eucalyptus mode=0700
+  with_items:
+  - cloud-cert.pem
+  - cloud-pk.pem
+  - euca.p12
