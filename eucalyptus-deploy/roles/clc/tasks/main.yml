@@ -1,0 +1,32 @@
+    - name: set tuned profile
+      action: command tuned-adm profile latency-performance
+    
+    # Here we use a state changed as an indicator of a new install
+    - name: Install the CLC packages
+      action: yum name=eucalyptus-cloud state=present enablerepo=eucalyptus-release,euca2ools-release,elrepo,epel
+      register: installed
+
+    - name: Template the configuration file
+      action: template src=../../common/templates/eucalyptus.conf.j2 dest=/etc/eucalyptus/eucalyptus.conf
+
+    # Only initialize the database if packages were installed
+    # (its a new environment)
+    - name: Initialize the database
+      action: command /usr/sbin/euca_conf --initialize
+      when: installed.changed
+
+    # Force restar the services
+    - name: Restart CLC
+      action: service name=eucalyptus-cloud state=restarted 
+
+    # Wait for services to come up 
+    - name: Waiting for CLC services
+      action: wait_for port=8777 delay=15
+
+    # Before we register commands, we need to copy move keys around.
+    - name: Fetch cloud keys
+      action: fetch src=/var/lib/eucalyptus/keys/{{ item }} dest=/tmp/ flat=yes
+      with_items:
+      - cloud-cert.pem
+      - cloud-pk.pem
+      - euca.p12

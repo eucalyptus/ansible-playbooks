@@ -1,0 +1,5 @@
+bridge: br0
+bridge_iface: em2
+bridge_mac: ansible_${bridge_iface}.macaddress
+bridgeip: ansible_${bridge.ipv4}.address
+bridge_type: static

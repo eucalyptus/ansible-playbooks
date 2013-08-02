@@ -11,7 +11,7 @@
     - include: common/handlers/services.yml
     - include: node/handlers/node-preconfig.yml
   vars_files:
-    - ../../../rhn.yml
+#    - ../../../rhn.yml
     - vars/nodecontroller.yml
     - vars/nodecontroller-net.yml
 
@@ -23,7 +23,7 @@
   handlers:
     - include: common/handlers/services.yml
   vars_files:
-    - ../../../rhn.yml
+#    - ../../../rhn.yml
     - vars/clustercontroller.yml
     - vars/nodecontroller-net.yml
 
@@ -35,7 +35,7 @@
   handlers:
     - include: common/handlers/services.yml
   vars_files:
-    - ../../../rhn.yml
+#    - ../../../rhn.yml
     - vars/storagecontroller.yml
     - vars/nodecontroller-net.yml
 # Since its single-frontend, have to be hacky with the vars. Need to move node controller networking vars into global to remove the need for above.
@@ -48,7 +48,7 @@
   handlers:
     - include: common/handlers/services.yml
   vars_files:
-    - ../../../rhn.yml
+#    - ../../../rhn.yml
     - vars/cloudcontroller.yml
     - vars/nodecontroller-net.yml
 
@@ -60,7 +60,7 @@
   handlers:
     - include: common/handlers/services.yml
   vars_files:
-    - ../../../rhn.yml
+#    - ../../../rhn.yml
     - vars/walrus.yml
     - vars/nodecontroller-net.yml
 

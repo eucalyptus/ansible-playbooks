@@ -1,0 +1,2 @@
+- name: restart cc
+  service: name=eucalyptus-cc state=restarted

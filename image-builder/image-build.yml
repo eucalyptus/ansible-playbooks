@@ -1,0 +1,76 @@
+- hosts: local 
+  connection: local
+  tasks:
+  - name: Create a disk image 
+    command: dd if=/dev/zero of=/tmp/myimage.img count=2000000
+
+  - name: Create disk label
+    command: /sbin/parted /tmp/myimage.img mklabel msdos
+
+  - name: Create filesystem 
+    command: /sbin/mkfs.ext3 -F /tmp/myimage.img -L rootdisk
+
+  - name: Find loopback
+    shell: losetup -f 
+    register: loopback
+
+  - name: Loopback attach
+    command: losetup ${loopback.stdout} /tmp/myimage.img
+
+  - name: Mount
+    command: mount ${loopback.stdout} /mnt
+
+  - name: Install the release RPM
+    command: rpm -i --root=/mnt http://mirror.centos.org/centos/6/os/x86_64/Packages/centos-release-6-4.el6.centos.10.x86_64.rpm
+  
+  - name: Install packages
+    command: yum -y --installroot=/mnt/ groupinstall Base
+
+  - name: Install some extras
+    command: yum -y --installroot=/mnt/ install vim openssh-server dhclient curl ntp
+
+  - name: Create mountpoints
+    command: mkdir -p /mnt/{proc,etc,dev,var}/{cache,log,lock/rpm}
+
+  - name: Mount proc
+    command: mount -t proc none /mnt/proc
+
+  - name: Mount dev
+    command: mount -o bind /dev /mnt/dev
+
+- hosts: local-chroot
+  user: root
+  tasks:
+  - name: Change some service states
+    service: name={{ item }} enabled=no 
+    with_items:
+    - abrt-ccpp
+    - abrt-oops
+    - abrtd
+    - ip6tables
+    - iptables
+    - kdump
+    - lvm2-monitor
+    - ntpd
+    - sshd
+
+  - name: Set up network and turn off zeroconf
+    template: src=templates/network.j2 dest=/etc/sysconfig/network owner=root group=root   
+ 
+  - name: Template network configuration file 
+    template: src=templates/ifcfg.j2 dest=/etc/sysconfig/network-scripts/ifcfg-eth0 owner=root group=root
+
+  - name: Template fstab
+    template: src=templates/fstab.j2 dest=/etc/fstab owner=root group=root
+
+  - name: Copy EPEL release RPM
+    copy: src=files/epel-release.rpm dest=/tmp/epel-release.rpm
+
+  - name: Install EPEL release RPM
+    command: yum -y install /tmp/epel-release.rpm
+
+  - name: Install rc.local
+    copy: src=files/rc.local dest=/etc/rc.d/rc.local
+    
+  - name: Set permissions 
+    file: path=/etc/rc.d/rc.local owner=root group=root mode=0755
