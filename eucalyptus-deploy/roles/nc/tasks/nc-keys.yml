@@ -1,0 +1,8 @@
+- name: Copy keys to NCs 
+  action: copy src=/tmp/{{ item }} dest=/var/lib/eucalyptus/keys/ owner=eucalyptus group=eucalyptus mode=0700
+  with_items:
+  - node-cert.pem
+  - node-pk.pem
+  - cluster-cert.pem
+  - cluster-pk.pem
+  - cloud-cert.pem

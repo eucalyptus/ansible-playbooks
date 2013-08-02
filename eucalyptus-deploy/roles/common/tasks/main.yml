@@ -1,0 +1,38 @@
+  - name: Copy RPM GPG keys
+    action: copy src={{ item }} dest=/etc/pki/rpm-gpg/
+    with_items:
+    - RPM-GPG-KEY-EPEL-6
+    - RPM-GPG-KEY-elrepo.org
+    - eucalyptus-release.pub
+    - euca2ools-release.pub
+  
+  - name: Template repo files
+    action: template src={{ item }}.j2 dest=/etc/yum.repos.d/{{ item }}
+    with_items:
+    - eucalyptus-release.repo
+    - euca2ools-release.repo
+    - elrepo.repo
+    - epel.repo
+  
+  - name: Install packages
+    action: yum pkg=$item state=installed
+    with_items:
+    - libselinux-python
+    - tuned
+    - unzip
+    - ntp
+    tags:
+    - packages
+
+  - name: Ensure SELinux is disabled
+    action: selinux policy=targeted state=permissive
+   
+  - name: Turn on NTP and start on boot
+    action: service name=ntpd enabled=yes state=started
+    tags:
+    - ntp
+
+  - name: disable firewall
+    action: service name=iptables enabled=no state=stopped
+    tags:
+    - firewall
