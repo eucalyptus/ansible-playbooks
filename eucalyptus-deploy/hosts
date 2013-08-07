@@ -1,0 +1,23 @@
+# Sample inventory file for your cloud deployment via Ansible
+
+[local]
+localhost
+
+[clc]
+prc1
+
+[walrus]
+prc2
+
+[cc]
+prc3
+
+[sc]
+prc4
+
+[nc]
+prc5
+prc6
+prc7
+prc8
+prc9
