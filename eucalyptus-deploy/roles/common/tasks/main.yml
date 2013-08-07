@@ -1,10 +1,10 @@
   - name: Import RPM keys
     action: rpm_key state=present key={{ item }} 
     with_items:
-    - {{ eucalyptus_release_rpm_key }}
+    - {{ eucalyptus_key }}
     - {{ epel_rpm_key }}
     - {{ elrepo_rpm_key }}
-    - {{ euca2ools_release_rpm_key }}
+    - {{ euca2ools_key }}
   
   - name: Template repo files
     action: template src={{ item }}.j2 dest=/etc/yum.repos.d/{{ item }}
