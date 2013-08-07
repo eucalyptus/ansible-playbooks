@@ -1,0 +1,21 @@
+This is a playbook for deploying Eucalyptus via packages in a distributed setup per the reference architecture found here:
+
+http://www.eucalyptus.com/eucalyptus-cloud/reference-architectures/dev-test-large  (minus SAN).
+
+It assumes you have an ansible inventory file which looks like this:
+
+[clc]
+<myclcip>
+
+[walrus]
+<mywalrusip>
+
+[cc]
+<myclusterip>
+
+[sc]
+<mystorageip>
+
+[nc]
+<mync1>
+<mync2>
