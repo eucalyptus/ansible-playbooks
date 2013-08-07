@@ -1,8 +1,10 @@
-This is a playbook for deploying Eucalyptus via packages in a distributed setup per the reference architecture found here:
+This is a playbook for deploying Eucalyptus via packages in accordance with reference Architectures. Depends on ansible 1.3(devel).
+
+The first playbook "dev-test-large" aims to deploy Eucalyptus in a distributed setup per the reference architecture found here:
 
 http://www.eucalyptus.com/eucalyptus-cloud/reference-architectures/dev-test-large  (minus SAN).
 
-It assumes you have an ansible inventory file which looks like this:
+All of these playbooks assume you have an inventory file configured and node controllers with two interfaces, as this playbook will create a bridge on one of them. It assumes you have an ansible inventory file which looks like this:
 
 [clc]
 <myclcip>

@@ -1,10 +1,10 @@
-  - name: Copy RPM GPG keys
-    action: copy src={{ item }} dest=/etc/pki/rpm-gpg/
+  - name: Import RPM keys
+    action: rpm_key state=present key={{ item }} 
     with_items:
-    - RPM-GPG-KEY-EPEL-6
-    - RPM-GPG-KEY-elrepo.org
-    - eucalyptus-release.pub
-    - euca2ools-release.pub
+    - {{ eucalyptus_release_rpm_key }}
+    - {{ epel_rpm_key }}
+    - {{ elrepo_rpm_key }}
+    - {{ euca2ools_release_rpm_key }}
   
   - name: Template repo files
     action: template src={{ item }}.j2 dest=/etc/yum.repos.d/{{ item }}
