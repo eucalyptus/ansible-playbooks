@@ -1,7 +1,17 @@
 ---
-# Include file. Common variables across all host groups 
+# Primary variable definition for cloud deployment.
+
+# Package variables
 euca_version: 3.3
 euca2ools_version: 3.0
+eucalyptus_release_rpm_key: http://www.eucalyptus.com/sites/all/modules/pubdlcnt/pubdlcnt.php?file=/sites/all/files/c1240596-eucalyptus-release-key.pub&nid=878
+euca2ools_release_rpm_key: http://www.eucalyptus.com/sites/all/modules/pubdlcnt/pubdlcnt.php?file=/sites/all/files/c1240596-eucalyptus-release-key.pub&nid=878
+epel_rpm_key: https://fedoraproject.org/static/0608B895.txt 
+elrepo_rpm_key: http://elrepo.org/RPM-GPG-KEY-elrepo.org
+eucalyptus_prerelease_rpm_key: http://www.eucalyptus.com/sites/all/modules/pubdlcnt/pubdlcnt.php?file=/sites/all/files/0260cf4e-eucalyptus-pre-release-key.pub&nid=878
+eucalyptus_prerelease_rpm_key: http://www.eucalyptus.com/sites/all/modules/pubdlcnt/pubdlcnt.php?file=/sites/all/files/0260cf4e-eucalyptus-pre-release-key.pub&nid=878
+
+# Common networking variables which apply to all hosts
 network_mode: MANAGED-NOVLAN
 vnet_publicips: 10.104.3.230-10.104.3.254
 vnet_subnet: 172.28.0.0
@@ -11,9 +21,9 @@ vnet_addrspernet: 32
 vnet_localip:
 vnet_pri: em2
 vnet_pub: em1
-hypervisor: kvm
 
-# Network configuration for the NC
+# Node configuration variables 
+hypervisor: kvm
 bridge: br0
 bridge_iface: em2
 bridge_mac: ansible_${bridge_iface}.macaddress
