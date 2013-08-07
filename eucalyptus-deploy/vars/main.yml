@@ -1,13 +1,17 @@
 ---
 # Primary variable definition for cloud deployment.
 
-# Package variables
+# Package variables. Use eucalyptus_key and euca2ools_key value to affect the RPM key which is used.
 euca_version: 3.3
 euca2ools_version: 3.0
-eucalyptus_release_rpm_key: http://www.eucalyptus.com/sites/all/modules/pubdlcnt/pubdlcnt.php?file=/sites/all/files/c1240596-eucalyptus-release-key.pub&nid=878
-euca2ools_release_rpm_key: http://www.eucalyptus.com/sites/all/modules/pubdlcnt/pubdlcnt.php?file=/sites/all/files/c1240596-eucalyptus-release-key.pub&nid=878
+eucalyptus_key: http://www.eucalyptus.com/sites/all/modules/pubdlcnt/pubdlcnt.php?file=/sites/all/files/c1240596-eucalyptus-release-key.pub&nid=878
+euca2ools_key: http://www.eucalyptus.com/sites/all/modules/pubdlcnt/pubdlcnt.php?file=/sites/all/files/c1240596-eucalyptus-release-key.pub&nid=878
 epel_rpm_key: https://fedoraproject.org/static/0608B895.txt 
 elrepo_rpm_key: http://elrepo.org/RPM-GPG-KEY-elrepo.org
+
+# Here are the URLs for release and pre-release keys, for reference.
+eucalyptus_release_rpm_key: http://www.eucalyptus.com/sites/all/modules/pubdlcnt/pubdlcnt.php?file=/sites/all/files/c1240596-eucalyptus-release-key.pub&nid=878
+euca2ools_release_rpm_key: http://www.eucalyptus.com/sites/all/modules/pubdlcnt/pubdlcnt.php?file=/sites/all/files/c1240596-eucalyptus-release-key.pub&nid=878
 eucalyptus_prerelease_rpm_key: http://www.eucalyptus.com/sites/all/modules/pubdlcnt/pubdlcnt.php?file=/sites/all/files/0260cf4e-eucalyptus-pre-release-key.pub&nid=878
 eucalyptus_prerelease_rpm_key: http://www.eucalyptus.com/sites/all/modules/pubdlcnt/pubdlcnt.php?file=/sites/all/files/0260cf4e-eucalyptus-pre-release-key.pub&nid=878
 
