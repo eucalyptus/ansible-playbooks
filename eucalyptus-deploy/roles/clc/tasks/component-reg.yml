@@ -38,8 +38,21 @@
       - node-cert.pem
       - node-pk.pem
 
+    - name: Wait for Walrus and his bukkitz
+      action: wait_for host=${hostvars.{$item}.ansible_$vnet_pub.ipv4.address} port=8773 delay=10 timeout=300
+      with_items: ${groups.walrus}
+
+#    - name: Source credentials
+#      action: shell source /root/admin-creds/eucarc && euca-modify-property -p $partition.storage.blockstoragemanager={{ storbackend }}
+#      tags:
+#      - storage
+                                           
+    - name: Install ELB utils
+      action: yum name=eucalyptus-load-balancer-image state=installed
+      register: result
+
     - name: Get Administrator Credentials
-      action: command /usr/sbin/euca_conf --get-credentials /root/admin.zip creates=/root/admin.zip
+      action: command euca-get-credentials -e / -a eucalyptus -u admin /root/admin.zip creates=/root/admin.zip
       tags:
       - creds
 
@@ -48,10 +61,11 @@
       tags:
       - creds
 
-    - name: Source credentials
-      action: shell source /root/admin-creds/eucarc && euca-modify-property -p $partition.storage.blockstoragemanager={{ storbackend }}
-      tags:
-      - storage
-                                           
-    - name: Configure ELB
-      action: yum name=eucalyptus-load-balancer-image state=installed
+# This section needs credential sourcing.
+
+    - name: Install default ELB image
+      action: command euca-install-load-balancer --install-default
+      when: result.changed
+
+    - name: Set block storage manager
+      action: command euca-modify-property -p {{ partition }}.storage.blockstoragemanager={{ storbackend }}

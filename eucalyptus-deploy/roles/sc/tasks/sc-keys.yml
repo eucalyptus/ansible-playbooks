@@ -3,3 +3,4 @@
   with_items:
   - cloud-cert.pem
   - cloud-pk.pem
+  - euca.p12
