@@ -2,12 +2,15 @@
 # Primary variable definition for cloud deployment.
 
 # Package variables. Use eucalyptus_key and euca2ools_key value to affect the RPM key which is used.
+# Set nightlies to True and euca_version to pre-release (e.g. 3.4) to deploy nightlies.
 euca_version: 3.3
 euca2ools_version: 3.0
-eucalyptus_key: http://www.eucalyptus.com/sites/all/modules/pubdlcnt/pubdlcnt.php?file=/sites/all/files/c1240596-eucalyptus-release-key.pub&nid=878
-euca2ools_key: http://www.eucalyptus.com/sites/all/modules/pubdlcnt/pubdlcnt.php?file=/sites/all/files/c1240596-eucalyptus-release-key.pub&nid=878
-epel_rpm_key: https://fedoraproject.org/static/0608B895.txt 
-elrepo_rpm_key: http://elrepo.org/RPM-GPG-KEY-elrepo.org
+keys:
+ - http://www.eucalyptus.com/sites/all/modules/pubdlcnt/pubdlcnt.php?file=/sites/all/files/c1240596-eucalyptus-release-key.pub&nid=878
+ - http://www.eucalyptus.com/sites/all/modules/pubdlcnt/pubdlcnt.php?file=/sites/all/files/c1240596-eucalyptus-release-key.pub&nid=878
+ - https://fedoraproject.org/static/0608B895.txt 
+ - http://elrepo.org/RPM-GPG-KEY-elrepo.org
+nightlies: false
 
 # Here are the URLs for release and pre-release keys, for reference.
 eucalyptus_release_rpm_key: http://www.eucalyptus.com/sites/all/modules/pubdlcnt/pubdlcnt.php?file=/sites/all/files/c1240596-eucalyptus-release-key.pub&nid=878
