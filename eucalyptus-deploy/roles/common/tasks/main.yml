@@ -1,18 +1,24 @@
-  - name: Import RPM keys
-    action: rpm_key state=present key={{ item }} 
-    with_items:
-    - {{ eucalyptus_key }}
-    - {{ epel_rpm_key }}
-    - {{ elrepo_rpm_key }}
-    - {{ euca2ools_key }}
+#  - name: Import RPM keys
+#    action: rpm_key state=present key={{ item }} 
+#    with_items: keys
   
-  - name: Template repo files
+  - name: Template repo files (release)
     action: template src={{ item }}.j2 dest=/etc/yum.repos.d/{{ item }}
     with_items:
     - eucalyptus-release.repo
     - euca2ools-release.repo
     - elrepo.repo
     - epel.repo
+    when: not nightlies 
+
+  - name: Template repo files (nightly)
+    action: template src={{ item }}.j2 dest=/etc/yum.repos.d/{{ item }}
+    with_items:
+    - eucalyptus-release.repo
+    - euca2ools-release.repo
+    - elrepo.repo
+    - epel.repo
+    when: nightlies
   
   - name: Install packages
     action: yum pkg=$item state=installed
