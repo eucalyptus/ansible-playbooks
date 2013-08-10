@@ -42,11 +42,6 @@
       action: wait_for host=${hostvars.{$item}.ansible_$vnet_pub.ipv4.address} port=8773 delay=10 timeout=300
       with_items: ${groups.walrus}
 
-#    - name: Source credentials
-#      action: shell source /root/admin-creds/eucarc && euca-modify-property -p $partition.storage.blockstoragemanager={{ storbackend }}
-#      tags:
-#      - storage
-                                           
     - name: Install ELB utils
       action: yum name=eucalyptus-load-balancer-image state=installed
       register: result
@@ -61,11 +56,32 @@
       tags:
       - creds
 
-# This section needs credential sourcing.
+    - name: Template bashrc for root
+      action: template src=bashrc.j2 dest=/root/.bashrc owner=root group=root
 
     - name: Install default ELB image
-      action: command euca-install-load-balancer --install-default
+      action: shell source /root/admin-creds/eucarc && euca-install-load-balancer --install-default
       when: result.changed
 
     - name: Set block storage manager
-      action: command euca-modify-property -p {{ partition }}.storage.blockstoragemanager={{ storbackend }}
+      action: shell source /root/admin-creds/eucarc && euca-modify-property -p {{ partition }}.storage.blockstoragemanager={{ storbackend }}
+
+    - name: Cleanup credentials
+      action: file state=absent path={{ item }}
+      with_items:
+      - /root/admin-creds
+      - /root/admin.zip
+
+    - name: Pause to settle and let ELB service ENABLE
+      action: pause minutes=2
+
+    - name: Get Administrator Credentials
+      action: command euca-get-credentials -e / -a eucalyptus -u admin /root/admin.zip creates=/root/admin.zip
+      tags:
+      - creds
+
+    - name: Unpack admin credentials
+      action: command /usr/bin/unzip -qou /root/admin.zip -d /root/admin-creds creates=/root/admin-creds/eucarc
+      tags:
+      - creds
+
