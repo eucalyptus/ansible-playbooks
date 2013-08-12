@@ -42,4 +42,9 @@ storbackend: overlay
 dasdevice:
 
 # Cluster variables
-partition: partuno 
+partition: partuno
+
+# Registration topology variables, used for checking.
+primary_walrus: "{{ hostvars[groups['walrus'][0]]['ansible_$vnet_pub']['ipv4']['address'] }}"
+primary_sc: "{{ hostvars[groups['sc'][0]]['ansible_$vnet_pub']['ipv4']['address'] }}"
+primary_cc: "{{ hostvars[groups['cc'][0]]['ansible_$vnet_pub']['ipv4']['address'] }}"

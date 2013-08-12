@@ -1,34 +1,34 @@
-#   Checks like this do not really work due to return being a list, evaluation fails with bla.rc == 1
-#   Ansible needs modifications to make this work. 
-#    - name: Check Walrus Registration
-#      action: shell /usr/sbin/euca_conf --list-services | grep -q walrus-${hostvars.{$item}.ansible_hostname}
-#      ignore_errors: yes
-#      register: walrus_check
-#      with_items: ${groups.walrus}
-#      tags:
-#      - reg
+# Registration steps are not expected to work for multiple components (e.g. multi-cluster or HA), yet.
 
-#   - name: Debug
-#      action: debug msg="This is return code $walrus_check.x[0].rc"
-
-
-# TO DO - WORK AROUND THIS BY SETTING A FACT?
+    - name: Check for Walrus
+      action: shell /usr/sbin/euca_conf --list-walruses | grep -q {{ primary_walrus }}
+      register: walrus_return
+      ignore_errors: true
 
     - name: Register Walrus
       action: command /usr/sbin/euca_conf --no-scp --no-rsync --no-sync --register-walrus --partition walrus --host ${hostvars.{$item}.ansible_$vnet_pub.ipv4.address} --component walrus-${hostvars.{$item}.ansible_hostname}
-      with_items: ${groups.walrus}
+      with_items: ${groups.walrus[0]}
+      when: walrus_return.rc|int == 1
+
+    - name: Check for SC
+      action: shell /usr/sbin/euca_conf --list-scs | grep -q {{ primary_sc }}
+      register: sc_return
+      ignore_errors: true
 
     - name: Register SC
       action: command /usr/sbin/euca_conf --no-scp --no-rsync --no-sync --register-sc --partition $partition --host ${hostvars.{$item}.ansible_$vnet_pub.ipv4.address} --component sc-${hostvars.{$item}.ansible_hostname}
-      with_items: ${groups.sc}
-      tags:
-      - reg
+      with_items: ${groups.sc[0]}
+      when: sc_return.rc|int == 1
+
+    - name: Check for CC
+      action: shell /usr/sbin/euca_conf --list-clusters | grep -q {{ primary_cc }}
+      register: cc_return
+      ignore_errors: true
 
     - name: Register CC
       action: command /usr/sbin/euca_conf --no-scp --no-rsync --no-sync --register-cluster --partition $partition --host ${hostvars.{$item}.ansible_$vnet_pub.ipv4.address} --component cc-${hostvars.{$item}.ansible_hostname}
-      with_items: ${groups.cc}
-      tags:
-      - reg
+      with_items: ${groups.cc[0]}
+      when: cc_return.rc|int == 1
 
     - name: Pull cluster (node and cc) keys
       action: fetch src=/var/lib/eucalyptus/keys/{{ partition }}/{{ item }} dest=/tmp/ flat=yes
