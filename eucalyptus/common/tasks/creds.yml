@@ -1,9 +1,0 @@
-- name: Get Administrator Credentials
-  action: command /usr/sbin/euca_conf --get-credentials /root/admin.zip creates=/root/admin.zip
-  tags:
-  - creds
-
-- name: Unpack admin credentials
-  action: command /usr/bin/unzip -qou /root/admin.zip -d /root/admin-creds creates=/root/admin-creds/eucarc
-  tags:
-  - creds

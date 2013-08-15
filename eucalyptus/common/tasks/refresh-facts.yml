@@ -1,2 +1,0 @@
-    - name: Refresh facts on hosts
-      action: setup
