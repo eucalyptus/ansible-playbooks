@@ -1,9 +1,0 @@
----
-# Variables common to CCs
-loglevel: INFO
-nc_port: 8775
-cc_port: 8774
-schedpolicy: ROUNDROBIN
-disable_tunneling: Y
-service: cc
-tuned_profile: latency-performance

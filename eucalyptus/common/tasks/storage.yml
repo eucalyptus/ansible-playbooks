@@ -1,4 +1,0 @@
-- name: Source credentials
-  action: shell source /root/admin-creds/eucarc && euca-modify-property -p $partition.storage.blockstoragemanager=overlay
-  tags:
-  - storage 

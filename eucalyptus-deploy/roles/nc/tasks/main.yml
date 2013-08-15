@@ -23,7 +23,7 @@
     - name: template the bridge interface file
       action: template src=ifconfig_bridge_${bridge_type}.j2 dest=/etc/sysconfig/network-scripts/ifcfg-${bridge}
       when: bridge_exists.rc == 1
-      
+
     - name: explicitly restart networking services
       action: service name=network state=restarted
                                                                 
