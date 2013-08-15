@@ -1,8 +1,0 @@
-    - name: restart networking services
-      action: service name=network state=restarted
-
-    - name: restart libvirt
-      action: service name=libvirtd state=restarted
-
-    - name: restart nc services
-      action: service name=eucalyptus-nc state=restarted
