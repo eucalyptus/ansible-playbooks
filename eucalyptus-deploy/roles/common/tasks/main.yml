@@ -15,7 +15,7 @@
     action: template src={{ item }}.j2 dest=/etc/yum.repos.d/{{ item }}
     with_items:
     - eucalyptus-nightly.repo
-    - euca2ools-nightly.repo
+    - euca2ools-release.repo
     - elrepo.repo
     - epel.repo
     when: nightlies
