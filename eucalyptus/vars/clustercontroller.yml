@@ -1,4 +1,0 @@
-service: eucalyptus-cc
-package: cc
-tuned_profile: latency-performance
-

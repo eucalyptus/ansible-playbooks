@@ -1,2 +1,0 @@
-- name: restart eucalyptus-cloud services
-  service: name=eucalyptus-cloud state=restarted

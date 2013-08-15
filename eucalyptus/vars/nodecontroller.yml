@@ -1,3 +1,0 @@
-service: eucalyptus-nc
-package: nc
-tuned_profile: virtual-host
