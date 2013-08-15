@@ -36,6 +36,8 @@ bridge_iface: em2
 bridge_mac: ansible_${bridge_iface}.macaddress
 bridgeip: ansible_${bridge.ipv4}.address
 bridge_type: static
+# Be careful with this property, it can break connection from ansible server to NC.
+#nc_gateway: "{{ hostvars[groups['cc'][0]]['ansible_$vnet_pri']['ipv4']['address'] }}"
 
 # Storage-related variables
 storbackend: overlay

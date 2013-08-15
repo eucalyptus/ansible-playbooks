@@ -13,3 +13,11 @@
 
     - name: Wait for CC services
       action: wait_for port=8774 delay=10
+
+    - name: Turn on IP fowarding
+      action: lineinfile dest=/etc/sysctl.conf regexp="^net.ipv4.ip_forward = 0" line="net.ipv4.ip_forward = 1"
+      register: sysctl_ipf
+
+    - name: Re-read sysctl values
+      action: command sysctl -e -q -p /etc/sysctl.conf
+      when: sysctl_ipf.changed
