@@ -12,3 +12,7 @@ To execute this playbook, follow these steps:
 * Set environmental variables: EC2_URL (if using Eucalyptus or specific endpoint), EC2_ACCESS_KEY (your Euca or AWS access key) and EC2_SECRET_KEY (your Euca or AWS secret key)
 * Edit ```mongodb-eucalyptus-ec2.yml``` and alter cloud-specific variables in the first play: ```keypair```, ```instance_type```, ```security_group```, ```image``` and ```count```. Check Ansible's module pages for more ec2-related options.
 * Using your private key, run the playbook like so: ```ansible-playbook mongodb-eucalyptus-ec2.yml -v --private-key=/path/to/my/key.pri```
+ 
+Notes on Idempotence
+
+This playbook contains two plays. It uses the ec2 module to launch an instance and then the add_host module to create a dynamic host group to target this instance for configuration.  If you wish to re-use this playbook without launching new instances, the second play should be separated into its own playbook and static hosts targetted.
