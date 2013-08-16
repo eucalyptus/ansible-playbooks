@@ -2,14 +2,14 @@
       action: command tuned-adm profile latency-performance
     
     # Here we use a state changed as an indicator of a new install
-    - name: Install the CLC packages
+    - name: Install the release CLC packages
       action: yum name=eucalyptus-cloud state=present enablerepo=eucalyptus-release,euca2ools-release,elrepo,epel
-      register: installed
+      register: installed_release
       when: not nightlies
 
-    - name: Install the CLC packages
+    - name: Install the nightly CLC packages
       action: yum name=eucalyptus-cloud state=present enablerepo=eucalyptus-nightly,euca2ools-release,elrepo,epel
-      register: installed
+      register: installed_nightly
       when: nightlies
 
     - name: Template the configuration file
@@ -19,7 +19,7 @@
     # (its a new environment)
     - name: Initialize the database
       action: command /usr/sbin/euca_conf --initialize creates=/var/lib/eucalyptus/keys/euca.p12  
-      when: installed.changed
+      when: installed_release.changed or installed_nightly.changed
 
     # Force restar the services
     - name: Restart CLC
