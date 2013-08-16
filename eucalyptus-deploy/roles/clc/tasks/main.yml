@@ -5,6 +5,12 @@
     - name: Install the CLC packages
       action: yum name=eucalyptus-cloud state=present enablerepo=eucalyptus-release,euca2ools-release,elrepo,epel
       register: installed
+      when: not nightlies
+
+    - name: Install the CLC packages
+      action: yum name=eucalyptus-cloud state=present enablerepo=eucalyptus-nightly,euca2ools-release,elrepo,epel
+      register: installed
+      when: nightlies
 
     - name: Template the configuration file
       action: template src=../../common/templates/eucalyptus.conf.j2 dest=/etc/eucalyptus/eucalyptus.conf
