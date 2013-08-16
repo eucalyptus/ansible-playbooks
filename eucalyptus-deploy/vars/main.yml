@@ -41,7 +41,7 @@ bridge_type: static
 
 # Storage-related variables
 storbackend: overlay
-dasdevice:
+das_device: /dev/sdb
 
 # Cluster variables
 partition: partuno

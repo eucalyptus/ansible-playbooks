@@ -66,6 +66,10 @@
     - name: Set block storage manager
       action: shell source /root/admin-creds/eucarc && euca-modify-property -p {{ partition }}.storage.blockstoragemanager={{ storbackend }}
 
+    - name: Set DAS device
+      action: shell source /root/admin-creds/eucarc && euca-modify-property -p {{ partition }}.storage.dasdevice={{ das_device }}
+      when: storbackend == "das"
+
     - name: Cleanup credentials
       action: file state=absent path={{ item }}
       with_items:
