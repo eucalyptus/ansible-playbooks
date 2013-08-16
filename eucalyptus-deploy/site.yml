@@ -1,9 +1,6 @@
 # Playbook for the cloud deployment. Ordering is important as a deployment is sequential. 
 
 - hosts: cc
-  tasks:
-    - name: setup
-      action: setup
 
 - hosts: nc
   vars_files:
