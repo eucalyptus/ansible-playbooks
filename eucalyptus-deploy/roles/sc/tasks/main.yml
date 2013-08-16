@@ -3,6 +3,11 @@
 
     - name: Install the SC packages
       action: yum name=eucalyptus-sc state=present enablerepo=eucalyptus-release,euca2ools-release,elrepo,epel
+      when: not nightlies
+
+    - name: Install the SC packages
+      action: yum name=eucalyptus-sc state=present enablerepo=eucalyptus-nightly,euca2ools-release,elrepo,epel
+      when: nightlies
 
     - name: Template the configuration file
       action: template src=../../common/templates/eucalyptus.conf.j2 dest=/etc/eucalyptus/eucalyptus.conf
