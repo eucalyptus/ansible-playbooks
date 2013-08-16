@@ -16,4 +16,4 @@ To execute this playbook, follow these steps:
 Notes on Idempotence
 ==========================================
 
-This playbook contains three plays, the first is the most significant. It uses the ec2 module to launch an instance and then the add_host module to create a dynamic host group to target this instance for configuration.  If you wish to re-use this playbook without launching new instances, the second play should be separated into its own playbook and static hosts targetted.
+This playbook contains three plays, the first is the most significant. It uses the ec2 module to launch an instance and then the add_host module to create a dynamic host group to target this instance for configuration.  If you wish to re-use this playbook without launching new instances, the second and third play should be separated into a new playbook and static hosts targetted (specifically mongo's (members of replicaset) and mongopri (first member)).
