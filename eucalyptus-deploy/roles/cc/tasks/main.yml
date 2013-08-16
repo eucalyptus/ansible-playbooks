@@ -3,11 +3,11 @@
 
     - name: Install the CC packages
       action: yum name=eucalyptus-cc state=present enablerepo=eucalyptus-release,euca2ools-release,elrepo,epel
-      with: not nightlies
+      when : not nightlies
 
     - name: Install the CC packages
       action: yum name=eucalyptus-cc state=present enablerepo=eucalyptus-nightly,euca2ools-release,elrepo,epel
-      with: nightlies
+      when : nightlies
       
     - name: Template the configuration file
       action: template src=../../common/templates/eucalyptus.conf.j2 dest=/etc/eucalyptus/eucalyptus.conf
