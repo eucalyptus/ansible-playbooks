@@ -5,13 +5,13 @@
       action: yum name=eucalyptus-nc state=present enablerepo=eucalyptus-release,euca2ools-release,elrepo,epel
       notify: 
         - start nc
-      with: not nightlies 
+      when: not nightlies 
 
     - name: Install the NC packages
       action: yum name=eucalyptus-nc state=present enablerepo=eucalyptus-nightly,euca2ools-release,elrepo,epel
       notify: 
         - start nc
-      with: nightlies 
+      when: nightlies 
 
     - name: Template the configuration file
       action: template src=../../common/templates/eucalyptus.conf.j2 dest=/etc/eucalyptus/eucalyptus.conf
