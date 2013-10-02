@@ -21,3 +21,9 @@ All of these playbooks assume you have an inventory file configured and node con
 [nc]
 <mync1>
 <mync2>
+
+You would then run the playbook with:
+
+# ansible-playbook -i /etc/ansible/hosts site.yml 
+
+Add additional options for sudo, ssh key etc. as required.
