@@ -9,15 +9,18 @@
   gather_facts: false
 
   vars:
-      keypair: lwade
+      keypair: uikey
       instance_type: c1.medium
       security_group: default
-      image: emi-C1D339FC 
+      image: emi-C1D339FC
 
   tasks:
     - name: Launch instance 
       local_action: ec2 keypair=$keypair group=$security_group instance_type=$instance_type image=$image wait=true 
       register: ec2
+
+    - name: Wait for a while
+      local_action: pause minutes=1
      
     - name: Add new instance to host group
       local_action: add_host hostname=${item.public_ip} groupname=launched 
@@ -66,7 +69,15 @@
 
     - name: Template the User Console Configuration with VMtype Definition
       action: template src=templates/console.ini.j2 dest=/etc/eucalyptus-console/console.ini 
-      only_if: euca_version|int == 3.2
+      ignore_errors: True
+      when: "'$euca_version' == '3.2'"
+      notify:
+      - restart console
+
+    - name: Template the User Console Configuration for Eucalyptus 3.3 version no VMType Definitions
+      action: template src=templates/console33.ini.j2 dest=/etc/eucalyptus-console/console.ini
+      ignore_errors: True
+      when: "'$euca_version' == '3.3'"
       notify:
       - restart console
 
