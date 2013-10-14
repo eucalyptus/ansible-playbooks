@@ -4,7 +4,7 @@ The first playbook "dev-test-large" aims to deploy Eucalyptus in a distributed s
 
 http://www.eucalyptus.com/eucalyptus-cloud/reference-architectures/dev-test-large  (minus SAN).
 
-All of these playbooks assume you have an inventory file configured and node controllers with two interfaces, as this playbook will create a bridge on one of them. It assumes you have an ansible inventory file which looks like this:
+All of these playbooks assume you have an inventory file configured.  Regarding NC's and networking mode, this playbook will create a bridge on a specific interface. It assumes you have an ansible inventory file which looks like this:
 
 [clc]
 <myclcip>
