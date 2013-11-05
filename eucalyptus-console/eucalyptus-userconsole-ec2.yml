@@ -78,7 +78,7 @@
       notify:
       - restart console
 
-    - name: Template the User Console Configuration for Eucalyptus 3.3 version no VMType Definitions
+    - name: Template the User Console Configuration for Eucalyptus 3.4 version no VMType Definitions
       action: template src=templates/console34.ini.j2 dest=/etc/eucalyptus-console/console.ini
       ignore_errors: True
       when: "'$euca_version' == '3.4'"
