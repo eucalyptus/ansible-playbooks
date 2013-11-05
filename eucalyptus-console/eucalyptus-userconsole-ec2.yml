@@ -9,10 +9,10 @@
   gather_facts: false
 
   vars:
-      keypair: uikey
+      keypair: adminui
       instance_type: c1.medium
       security_group: default
-      image: emi-C1D339FC
+      image: emi-3DA935C1
 
   tasks:
     - name: Launch instance 
@@ -71,12 +71,20 @@
       notify:
       - restart console
 
-    - name: Template the User Console Configuration for Eucalyptus 3.3 version or greater no VMType Definitions
+    - name: Template the User Console Configuration for Eucalyptus 3.3 version no VMType Definitions
       action: template src=templates/console33.ini.j2 dest=/etc/eucalyptus-console/console.ini
       ignore_errors: True
-      when: "'$euca_version' >= '3.3'"
+      when: "'$euca_version' == '3.3'"
       notify:
       - restart console
+
+    - name: Template the User Console Configuration for Eucalyptus 3.3 version no VMType Definitions
+      action: template src=templates/console34.ini.j2 dest=/etc/eucalyptus-console/console.ini
+      ignore_errors: True
+      when: "'$euca_version' == '3.4'"
+      notify:
+      - restart console
+
 
     - name: Debug
       action: debug msg="This is {{ euca_version }} here"
