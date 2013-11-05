@@ -21,3 +21,4 @@ m1xlargedisk: 20
 c1xlargecpu: 6
 c1xlargemem: 4096
 c1xlargedisk: 25
+sessionidletimeout: 28800
