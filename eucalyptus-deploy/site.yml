@@ -1,4 +1,5 @@
 # Playbook for the cloud deployment. Ordering is important as a deployment is sequential. 
+# Variables for the cloud configuration are defined globally in ./vars/main.yml
 
 - hosts: cc
 
@@ -11,9 +12,13 @@
   post_tasks:
     - action: setup
 
+- hosts: nc
+
 - hosts: cc
   vars_files:
     - vars/main.yml
+  pre_tasks:
+    - action: setup
   roles:
     - common
     - cc

@@ -16,7 +16,7 @@
       ignore_errors: true
 
     - name: Register SC
-      action: command /usr/sbin/euca_conf --no-scp --no-rsync --no-sync --register-sc --partition $partition --host ${hostvars.{$item}.ansible_$vnet_pub.ipv4.address} --component sc-${hostvars.{$item}.ansible_hostname}
+      action: command /usr/sbin/euca_conf --no-scp --no-rsync --no-sync --register-sc --partition {{ partition_name }} --host ${hostvars.{$item}.ansible_$vnet_pub.ipv4.address} --component sc-${hostvars.{$item}.ansible_hostname}
       with_items: ${groups.sc[0]}
       when: sc_return.rc|int == 1
 
@@ -26,12 +26,12 @@
       ignore_errors: true
 
     - name: Register CC
-      action: command /usr/sbin/euca_conf --no-scp --no-rsync --no-sync --register-cluster --partition $partition --host ${hostvars.{$item}.ansible_$vnet_pub.ipv4.address} --component cc-${hostvars.{$item}.ansible_hostname}
+      action: command /usr/sbin/euca_conf --no-scp --no-rsync --no-sync --register-cluster --partition {{ partition_name }} --host ${hostvars.{$item}.ansible_$vnet_pub.ipv4.address} --component cc-${hostvars.{$item}.ansible_hostname}
       with_items: ${groups.cc[0]}
       when: cc_return.rc|int == 1
 
     - name: Pull cluster (node and cc) keys
-      action: fetch src=/var/lib/eucalyptus/keys/{{ partition }}/{{ item }} dest=/tmp/ flat=yes
+      action: fetch src=/var/lib/eucalyptus/keys/{{ partition_name }}/{{ item }} dest=/tmp/ flat=yes
       with_items:
       - cluster-cert.pem
       - cluster-pk.pem
@@ -64,10 +64,10 @@
       when: result.changed
 
     - name: Set block storage manager
-      action: shell source /root/admin-creds/eucarc && euca-modify-property -p {{ partition }}.storage.blockstoragemanager={{ storbackend }}
+      action: shell source /root/admin-creds/eucarc && euca-modify-property -p {{ partition_name }}.storage.blockstoragemanager={{ storbackend }}
 
     - name: Set DAS device
-      action: shell source /root/admin-creds/eucarc && euca-modify-property -p {{ partition }}.storage.dasdevice={{ das_device }}
+      action: shell source /root/admin-creds/eucarc && euca-modify-property -p {{ partition_name }}.storage.dasdevice={{ das_device }}
       when: storbackend == "das"
 
     - name: Cleanup credentials

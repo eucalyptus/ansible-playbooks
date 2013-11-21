@@ -2,13 +2,13 @@
       action: command tuned-adm profile enterprise-storage
 
     - name: Install the NC packages
-      action: yum name=eucalyptus-nc state=present enablerepo=eucalyptus-release,euca2ools-release,elrepo,epel
+      action: yum name=eucalyptus-nc state=latest enablerepo=eucalyptus-release,euca2ools-release,elrepo,epel
       notify: 
         - start nc
       when: not nightlies 
 
     - name: Install the NC packages
-      action: yum name=eucalyptus-nc state=present enablerepo=eucalyptus-nightly,euca2ools-release,elrepo,epel
+      action: yum name=eucalyptus-nc state=latest enablerepo=eucalyptus-nightly,euca2ools-release,elrepo,epel
       notify: 
         - start nc
       when: nightlies 
