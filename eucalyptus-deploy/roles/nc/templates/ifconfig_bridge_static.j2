@@ -5,6 +5,8 @@ TYPE=Bridge
 BOOTPROTO=static
 IPADDR={{ chosenif.ipv4.address }}
 NETMASK={{ chosenif.ipv4.netmask }}
+{% if nc_gateway %}
 GATEWAY={{ nc_gateway }}
+{% endif %}
 ONBOOT=yes
 DELAY=0

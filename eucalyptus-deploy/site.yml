@@ -73,3 +73,8 @@
     - vars/main.yml
   tasks:
   - include: roles/nc/tasks/nc-keys.yml 
+
+- hosts: sc
+  post_tasks:
+    - action: service name=eucalyptus-cloud state=restarted
+    

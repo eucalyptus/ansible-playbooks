@@ -21,7 +21,7 @@
     when: nightlies
   
   - name: Install packages
-    action: yum pkg=$item state=installed
+    action: yum name={{ item }} state=installed enablerepo=base,updates
     with_items:
     - libselinux-python
     - tuned
@@ -30,6 +30,9 @@
     tags:
     - packages
 
+  - name: Fix java version
+    action: yum name=http://mirror.centos.org/centos/6.4/updates/x86_64/Packages/java-1.7.0-openjdk-1.7.0.25-2.3.10.4.el6_4.x86_64.rpm state=installed enablerepo=base,updates
+   
   - name: Ensure SELinux is disabled
     action: selinux policy=targeted state=permissive
    

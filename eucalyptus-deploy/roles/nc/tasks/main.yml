@@ -2,13 +2,13 @@
       action: command tuned-adm profile enterprise-storage
 
     - name: Install the NC packages
-      action: yum name=eucalyptus-nc state=latest enablerepo=eucalyptus-release,euca2ools-release,elrepo,epel
+      action: yum name=eucalyptus-nc state=latest enablerepo=eucalyptus-release,euca2ools-release,elrepo,epel,base,updates
       notify: 
         - start nc
       when: not nightlies 
 
     - name: Install the NC packages
-      action: yum name=eucalyptus-nc state=latest enablerepo=eucalyptus-nightly,euca2ools-release,elrepo,epel
+      action: yum name=eucalyptus-nc state=latest enablerepo=eucalyptus-nightly,euca2ools-release,elrepo,epel,base,updates
       notify: 
         - start nc
       when: nightlies 
@@ -24,11 +24,11 @@
       ignore_errors: true
                       
     - name: template the interface file
-      action: template src=ifconfig_bridge_interface.j2 dest=/etc/sysconfig/network-scripts/ifcfg-${bridge_iface}
+      action: template src=ifconfig_bridge_interface.j2 dest=/etc/sysconfig/network-scripts/ifcfg-{{ bridge_iface }}
       when: bridge_exists.rc == 1
                                 
     - name: template the bridge interface file
-      action: template src=ifconfig_bridge_${bridge_type}.j2 dest=/etc/sysconfig/network-scripts/ifcfg-${bridge}
+      action: template src=ifconfig_bridge_${bridge_type}.j2 dest=/etc/sysconfig/network-scripts/ifcfg-{{ bridge }}
       when: bridge_exists.rc == 1
 
     - name: explicitly restart networking services

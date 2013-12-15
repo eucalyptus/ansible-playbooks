@@ -3,12 +3,12 @@
     
     # Here we use a state changed as an indicator of a new install
     - name: Install the release CLC packages
-      action: yum name=eucalyptus-cloud state=latest enablerepo=eucalyptus-release,euca2ools-release,elrepo,epel
+      action: yum name=eucalyptus-cloud state=latest enablerepo=eucalyptus-release,euca2ools-release,elrepo,epel,base,updates
       register: installed_release
       when: not nightlies
 
     - name: Install the nightly CLC packages
-      action: yum name=eucalyptus-cloud state=latest enablerepo=eucalyptus-nightly,euca2ools-release,elrepo,epel
+      action: yum name=eucalyptus-cloud state=latest enablerepo=eucalyptus-nightly,euca2ools-release,elrepo,epel,base,updates
       register: installed_nightly
       when: nightlies
 

@@ -2,11 +2,11 @@
       action: command tuned-adm profile enterprise-storage
 
     - name: Install the SC packages
-      action: yum name=eucalyptus-sc state=latest enablerepo=eucalyptus-release,euca2ools-release,elrepo,epel
+      action: yum name=eucalyptus-sc state=latest enablerepo=eucalyptus-release,euca2ools-release,elrepo,epel,base,updates
       when: not nightlies
 
     - name: Install the SC packages
-      action: yum name=eucalyptus-sc state=latest enablerepo=eucalyptus-nightly,euca2ools-release,elrepo,epel
+      action: yum name=eucalyptus-sc state=latest enablerepo=eucalyptus-nightly,euca2ools-release,elrepo,epel,base,updates
       when: nightlies
 
     - name: Template the configuration file

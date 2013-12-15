@@ -7,9 +7,14 @@
   - node-pk.pem
   - cloud-pk.pem
   - cloud-cert.pem
+#  when: not inventory_hostname in groups.clc 
 
 - name: Restart CC
   action: service name=eucalyptus-cc state=restarted
+
+- name: Restart CLC
+  action: service name=eucalyptus-cloud state=restarted
+  when: inventory_hostname in groups.clc
 
 - name: Wait for service
   action: wait_for port=8774 delay=15
