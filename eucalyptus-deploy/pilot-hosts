@@ -4,20 +4,16 @@
 localhost
 
 [clc]
-prc1
+prc10 
 
 [walrus]
-prc2
+prc10
 
 [cc]
-prc3
+prc10
 
 [sc]
-prc4
+prc10
 
 [nc]
-prc5
-prc6
-prc7
-prc8
-prc9
+prc11
