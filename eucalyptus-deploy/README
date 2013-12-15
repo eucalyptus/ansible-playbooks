@@ -22,8 +22,8 @@ All of these playbooks assume you have an inventory file configured.  Regarding 
 <mync1>
 <mync2>
 
-You would then run the playbook with:
+You would then run the playbook with (for example):
 
-# ansible-playbook -i /etc/ansible/hosts site.yml 
+# ansible-playbook -i dev-test-large-hosts site.yml -u root -k
 
 Add additional options for sudo, ssh key etc. as required.
