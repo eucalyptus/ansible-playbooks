@@ -1,4 +1,4 @@
-This is a playbook for deploying Eucalyptus via packages in accordance with reference Architectures. Depends on ansible 1.3(devel).
+This is a playbook for deploying Eucalyptus via packages in accordance with reference Architectures. Depends on ansible 1.3 or above.
 
 The first playbook "dev-test-large" aims to deploy Eucalyptus in a distributed setup per the reference architecture found here:
 
