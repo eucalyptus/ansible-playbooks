@@ -1,3 +1,5 @@
+** INTRO **
+
 This is a playbook for deploying Eucalyptus via packages in accordance with reference Architectures. Depends on ansible 1.3 or above.
 
 The first playbook "dev-test-large" aims to deploy Eucalyptus in a distributed setup per the reference architecture found here:
@@ -28,4 +30,12 @@ You would then run the playbook with (for example):
 
 Add additional options for sudo, ssh key etc. as required.
 
+** PLAYBOOK CONFIG **
+
 Note that variables for the installation should be configured in vars/main.yml.  Here you can change the software version, network settings etc.
+
+** ANSIBLE CONFIGURATION **
+
+I've not yet removed all of the deprecated variable definitions, you might want to set this parameter in /etc/ansible/ansible.cfg to remove warnings:
+
+deprecation_warnings=False
