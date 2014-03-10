@@ -39,3 +39,7 @@ Note that variables for the installation should be configured in vars/main.yml. 
 I've not yet removed all of the deprecated variable definitions, you might want to set this parameter in /etc/ansible/ansible.cfg to remove warnings:
 
 deprecation_warnings=False
+
+You will definately need this too, for now:
+
+error_on_undefined_vars = False
