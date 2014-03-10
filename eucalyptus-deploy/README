@@ -27,3 +27,5 @@ You would then run the playbook with (for example):
 # ansible-playbook -i dev-test-large-hosts site.yml -u root -k
 
 Add additional options for sudo, ssh key etc. as required.
+
+Note that variables for the installation should be configured in vars/main.yml.  Here you can change the software version, network settings etc.
