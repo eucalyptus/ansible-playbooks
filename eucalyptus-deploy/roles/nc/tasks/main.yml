@@ -13,11 +13,6 @@
         - start nc
       when: nightlies 
 
-    - name: Template the configuration file
-      action: template src=../../common/templates/eucalyptus.conf.j2 dest=/etc/eucalyptus/eucalyptus.conf
-      notify: 
-        - restart nc
-               
     - name: checking existing networking configuration
       action: shell /sbin/ifconfig {{ bridge }}
       register: bridge_exists
@@ -33,6 +28,14 @@
 
     - name: explicitly restart networking services
       action: service name=network state=restarted
+
+    - name: update facts to reflect network changes
+      action: setup
+      
+    - name: Template the configuration file
+      action: template src=../../common/templates/eucalyptus.conf.j2 dest=/etc/eucalyptus/eucalyptus.conf
+      notify: 
+        - restart nc
                                                                 
     - name: modprobe kvm modules
       action: shell /sbin/modprobe kvm_intel
