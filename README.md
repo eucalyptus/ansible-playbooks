@@ -1,3 +1,8 @@
+NOTICE
+=================
+
+The playbook for deploying Eucalyptus has moved:  github.com/eucalyptus/playbook
+
 ansible-playbooks
 =================
 
